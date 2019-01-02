@@ -1,0 +1,10 @@
+{
+    "compilerOptions": {
+        "allowJs": true,
+        "checkJs": true,
+        "module": "es2015",
+        "allowSyntheticDefaultImports": true,
+        "noEmit": true,
+        "target": "esnext"
+    }
+}
