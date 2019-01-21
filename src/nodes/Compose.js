@@ -1,10 +1,10 @@
 import Node from './Node';
 import {createCanvas, mediaSize, paintToCanvas} from './canvas';
 
-export default class Resize extends Node {
+export default class Compose extends Node {
 
     constructor(options) {
-        super({
+        super('Compose', {
             fg: 'Image',
             fgX: 'Number',
             fgY: 'Number',

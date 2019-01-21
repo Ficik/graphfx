@@ -1,10 +1,10 @@
 import WebGL from './WebGl';
 
 
-export default class BrightnessContrast extends WebGL {
+export default class Sepia extends WebGL {
 
     constructor() {
-        super({
+        super('Sepia', {
             amount: 'Number',
         })
     }

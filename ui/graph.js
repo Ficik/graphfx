@@ -1,6 +1,6 @@
 import * as nodes from '../src/nodes';
 import {sampleImage, getStream} from './helpers';
-
+/*
 const resize = new nodes.Resize({
     width: 1000,
     height: 1000,
@@ -26,11 +26,4 @@ sepia.in.image.connect(hsv.out.image);
 compose.in.fg.connect(sepia.out.image);
 
 getStream((video) => resize.in.image.value = video);
-
-export default [
-    resize,
-    brightnessContrast,
-    hsv,
-    sepia,
-    compose,
-];
+*/

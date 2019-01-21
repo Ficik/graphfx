@@ -15,6 +15,10 @@ export class Input {
         }
     }
 
+    get id() {
+        return `${this.__owner.id}-${this.__name}`;
+    }
+
     get name() {
         return this.__name;
     }
@@ -29,12 +33,20 @@ export class Input {
     }
 
     connect(output) {
+        this.disconnect();
         this.__output = output
         this.__output.onchange(this.__onchangelistener);
     }
 
     disconnect(output) {
-        this.__output.offchage(this.__onchangelistener);
+        if (this.__output) {
+            this.__output.offchange(this.__onchangelistener);
+            this.__output = null;
+        }
+    }
+
+    get output() {
+        return this.__output;
     }
 
     __notifyListeners() {
@@ -51,6 +63,13 @@ export class Input {
         this.__listeners = this.__listeners
             .filter((l) => l !== listener);
     }
+
+    serialize() {
+        return {
+            value: this.__output ? null : this.__value,
+            output: this.__output ? this.__output.id: null,
+        }
+    }
 }
 
 export class Output {
@@ -60,6 +79,10 @@ export class Output {
         this.__name = name;
         this.__owner = owner
         this.__listeners = [];
+    }
+
+    get id() {
+        return `${this.__owner.id}-${this.__name}`;
     }
 
     get name() {
@@ -94,8 +117,9 @@ export class Output {
 
 export class Inputs {
 
-    constructor(variables) {
+    constructor(variables, owner) {
         this.__values = {};
+        this.__owner = owner;
         this.variables = variables;
 
         for (let name of Object.keys(this.variables)) {
@@ -108,14 +132,27 @@ export class Inputs {
         }
     }
 
+    get id() {
+        return `${this.__owner.id}-in`;
+    }
+
     update(changed) {
 
+    }
+
+    serialize() {
+        const res = {};
+        for (let name of Object.keys(this.variables)) {
+            res[name] = this.__values[name].serialize();
+        }
+        return res;
     }
 }
 
 export class Outputs {
-    constructor(variables) {
+    constructor(variables, owner) {
         this.__values = {};
+        this.__owner = owner;
         this.variables = variables;
 
         for (let name of Object.keys(this.variables)) {
@@ -126,5 +163,13 @@ export class Outputs {
                 },
             })
         }
+    }
+
+    get id() {
+        return `${this.__owner.id}-out`;
+    }
+
+    serialize() {
+        return null;
     }
 }

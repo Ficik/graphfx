@@ -49,7 +49,7 @@ const config = {
       {
         test: /\.css$/,
         use: [
-          {loader: 'style-loader'},
+          {loader: 'vue-style-loader'},
           {loader: 'css-loader'},
         ],
       }

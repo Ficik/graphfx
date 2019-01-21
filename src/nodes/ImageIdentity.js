@@ -2,7 +2,7 @@ import Node from './Node';
 
 export default class ImageIdentity extends Node {
     constructor() {
-        super({
+        super('ImageIdentity', {
             image: 'Image',
         }, {
             image: 'Image',

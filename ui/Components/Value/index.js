@@ -17,6 +17,7 @@ export default {
         return h(
             this.type === 'Image' ? ImageValue :
             this.type === 'Number' ? StringValue :
+            this.type === 'Color' ? StringValue :
             Array.isArray(this.type) ? SelectValue :
             null,
         {props: {value: this.value, type: this.type}})

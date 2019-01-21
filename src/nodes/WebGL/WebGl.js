@@ -6,8 +6,8 @@ console.log(webglUtils);
 
 export default class WebGL extends Node {
 
-    constructor(inputs={}) {
-        super(Object.assign({
+    constructor(name, inputs={}) {
+        super(name, Object.assign({
             image: 'Image',
         }, inputs), {
             image: 'Image'
@@ -86,7 +86,7 @@ export default class WebGL extends Node {
      *
      * @param {WebGLRenderingContext} gl
      */
-    program(gl) {
+    compileProgram(gl) {
         const program = gl.createProgram();
 
         gl.attachShader(program, this.vertShader(gl));
@@ -115,10 +115,7 @@ export default class WebGL extends Node {
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
 
-        if (this.image) {
-            // Upload the image into the texture.
-            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, this.image);
-        }
+
         return texture;
     }
 
@@ -126,22 +123,46 @@ export default class WebGL extends Node {
 
     }
 
+    setup() {
+        if (!this.canvas) {
+            this.program = null;
+            this.canvas = createCanvas(0, 0);
+        }
+        const gl = this.canvas.getContext('webgl');
+        if (!this.program) {
+            this.program = this.compileProgram(gl);
+            gl.useProgram(this.program);
+            this.createTexture(gl);
+        }
+    }
+
     __update() {
         const image = this.in.image.value;
         if (!image) return;
         const {width, height} = mediaSize(image);
-        const canvas = createCanvas(width, height);
+        this.setup();
+        const canvas = this.canvas;
+        canvas.width = width;
+        canvas.height = height;
+
         const gl = canvas.getContext('webgl');
-        const program = this.program(gl);
+        const program = this.program;
+
+        gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+        gl.clearColor(0, 0, 0, 0);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+
 
         const positionLocation = gl.getAttribLocation(program, "a_position");
         const texcoordLocation = gl.getAttribLocation(program, "a_texCoord");
         const resolutionLocation = gl.getUniformLocation(program, "u_resolution");
 
-        const positionBuffer = gl.createBuffer();
+        if (this.image) {
+            // Upload the image into the texture.
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, this.image);
+        }
 
-        gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-        this.setRectangle(gl, 0, 0, width, height);
+
         const texcoordBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, texcoordBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
@@ -153,17 +174,12 @@ export default class WebGL extends Node {
             1.0,  1.0,
         ]), gl.STATIC_DRAW);
 
-        this.createTexture(gl);
-
-        gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-        gl.clearColor(0, 0, 0, 0);
-        gl.clear(gl.COLOR_BUFFER_BIT);
-
-        gl.useProgram(program);
 
         gl.enableVertexAttribArray(positionLocation);
+        const positionBuffer = gl.createBuffer();
 
         gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+        this.setRectangle(gl, 0, 0, width, height);
 
         // Tell the position attribute how to get data out of positionBuffer (ARRAY_BUFFER)
         var size = 2;          // 2 components per iteration
@@ -195,10 +211,7 @@ export default class WebGL extends Node {
         this._setParams(gl, program);
 
         // Draw the rectangle.
-        var primitiveType = gl.TRIANGLES;
-        var offset = 0;
-        var count = 6;
-        gl.drawArrays(primitiveType, offset, count);
+        gl.drawArrays(gl.TRIANGLES, 0, 6);
 
         this.out.image.value = canvas;
     }

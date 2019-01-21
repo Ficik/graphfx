@@ -1,11 +1,9 @@
 import Vue from 'vue';
-import Graph from './Components/Graph.vue';
-
-import graph from './graph';
+import App from './Components/App.vue';
 
 new Vue({
     el: '#app',
     render(h) {
-        return h(Graph, {props: {graph}})
-    }
+        return h(App)
+    },
 })

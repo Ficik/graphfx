@@ -4,7 +4,7 @@ import WebGL from './WebGl';
 export default class BrightnessContrast extends WebGL {
 
     constructor() {
-        super({
+        super('BrightnessContrast', {
             brightness: 'Number',
             contrast: 'Number',
         })

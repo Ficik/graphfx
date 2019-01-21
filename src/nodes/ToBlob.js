@@ -4,7 +4,7 @@ import {createCanvas} from './canvas';
 export default class ToBlob extends Node {
 
     constructor(options) {
-        super({
+        super('ToBlob', {
             image: 'Image',
         }, {
             image: 'Image',

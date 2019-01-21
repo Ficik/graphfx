@@ -1,10 +1,10 @@
 import WebGL from './WebGl';
 
 
-export default class BrightnessContrast extends WebGL {
+export default class HSV extends WebGL {
 
     constructor() {
-        super({
+        super('HSV', {
             hue: 'Number',
             saturation: 'Number',
             value: 'Number',

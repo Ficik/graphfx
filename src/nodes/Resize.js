@@ -4,7 +4,7 @@ import {createCanvas, mediaSize, paintToCanvas} from './canvas';
 export default class Resize extends Node {
 
     constructor(options) {
-        super({
+        super('Resize', {
             image: 'Image',
             width: 'Number',
             height: 'Number',
@@ -24,6 +24,9 @@ export default class Resize extends Node {
 
     __update() {
         const media = this.__in.image.value;
+        if (!media) {
+            return;
+        }
         const canvas = createCanvas(this.width, this.height);
 
         const {width: srcWidth, height: srcHeight} = mediaSize(media);
