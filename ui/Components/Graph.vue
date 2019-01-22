@@ -22,6 +22,7 @@
                 :selectedOutput="selectedOutput"
                 @outputSelected="selectedOutput = $event"
                 @inputSelected="selectedInput = $event"
+                @removeNode="removeNode"
             />
         </Draggable>
         <ContextMenu
@@ -140,6 +141,11 @@ export default {
                 node: new node(),
             });
             this.contextMenuPosition = null;
+        },
+        removeNode(nodeToRemove) {
+            const index = this.graph.findIndex(({node}) => node === nodeToRemove);
+            console.log('nodeIndex', index);
+            this.graph.splice(index, 1);
         }
     },
     computed: {

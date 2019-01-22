@@ -1,13 +1,13 @@
-import {Inputs, Outputs} from './io.js';
+import {Inputs, Outputs} from './io';
 import uuidv4 from 'uuid/v4';
 
 export default class Node {
 
-    constructor(name, inputNames, outputNames) {
+    constructor(name, inputDefinition, outputDefiniton, options) {
         this.name = name;
         this.id = uuidv4();
-        this.__in = new Inputs(inputNames, this);
-        this.__out = new Outputs(outputNames, this);
+        this.__in = new Inputs(inputDefinition, this);
+        this.__out = new Outputs(outputDefiniton, this);
         this.__in.update = (name) => this.__update([name]);
     }
 

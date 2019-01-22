@@ -1,10 +1,10 @@
 <template>
-    <select v-model="value.value">
+    <select v-model="io.value">
         <option
-            v-for="t in type"
-            :value="t"
-            :key="t"
-        >{{ t }}</option>
+            v-for="value in io.definition.enum"
+            :value="value"
+            :key="value"
+        >{{ value }}</option>
     </select>
 </template>
 <script>
@@ -14,7 +14,7 @@ export default {
             type: null,
             required: true,
         },
-        value: {
+        io: {
             type: null,
             required: true,
         }

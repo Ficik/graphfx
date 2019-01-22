@@ -21,8 +21,9 @@
                 >&times;</span>
                 </div>
                 <Value
-                    :type="type"
-                    :value="node.in[name]"
+                    :io="node.in[name]"
+                    direction="input"
+                    @change="(value) => node.in[name].value = value"
                     class="node-var__value"
                 />
             </div>
@@ -43,11 +44,17 @@
                     @click="$emit('outputSelected', node.out[name])"
                 >{{ name }} <!--<i>{{typeName(type)}}</i>--></div>
                 <Value
-                    :type="type"
-                    :value="node.out[name]"
+                    :io="node.out[name]"
+                    direction="output"
                     class="node-var__value"
                 />
             </div>
+        </div>
+        <div
+            class="node__remove"
+            @click="removeNode"
+        >
+            &times;
         </div>
     </div>
 </template>
@@ -95,6 +102,9 @@ export default {
             }
             return ins;
         },
+        removeNode() {
+            this.$emit('removeNode', this.node);
+        }
     }
 }
 </script>
@@ -143,5 +153,19 @@ export default {
 
 .node__var {
     margin-bottom: 2px
+}
+
+.node__remove {
+    position: absolute;
+    top: -20px;
+    right: -20px;
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 </style>

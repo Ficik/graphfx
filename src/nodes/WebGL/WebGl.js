@@ -8,9 +8,13 @@ export default class WebGL extends Node {
 
     constructor(name, inputs={}) {
         super(name, Object.assign({
-            image: 'Image',
+            image: {
+                type: 'Image',
+            },
         }, inputs), {
-            image: 'Image'
+            image: {
+                type: 'Image',
+            },
         });
     }
 

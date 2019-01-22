@@ -4,22 +4,34 @@ import SelectValue from './Select.vue';
 
 export default {
     props: {
-        type: {
+        io: {
+            type: Object,
+            required: true,
+        },
+        direction: {
             type: String,
             required: true,
         },
-        value: {
-            type: null,
-            required: true,
-        }
     },
     render(h) {
         return h(
-            this.type === 'Image' ? ImageValue :
-            this.type === 'Number' ? StringValue :
-            this.type === 'Color' ? StringValue :
-            Array.isArray(this.type) ? SelectValue :
+            this.io.type === 'Image' ? ImageValue :
+            this.io.type === 'Number' ? StringValue :
+            this.io.type === 'Color' ? StringValue :
+            this.io.definition.enum ? SelectValue :
             null,
-        {props: {value: this.value, type: this.type}})
+        {
+            props: {
+                io: this.io,
+                value: this.io.value,
+                type: this.io.type,
+                direction: this.direction
+            },
+            on: {
+                change: (value) => {
+                    this.$emit('change', value);
+                }
+            }
+        })
     }
 };

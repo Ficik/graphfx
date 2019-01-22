@@ -5,8 +5,14 @@ export default class BrightnessContrast extends WebGL {
 
     constructor() {
         super('BrightnessContrast', {
-            brightness: 'Number',
-            contrast: 'Number',
+            brightness: {
+                type: 'Number',
+                default: 1,
+            },
+            contrast: {
+                type: 'Number',
+                default: 1,
+            },
         })
     }
 
@@ -23,23 +29,24 @@ export default class BrightnessContrast extends WebGL {
         uniform vec2 u_brightnessContrast;
 
         void main() {
-            vec3 c = texture2D(u_image, v_texCoord).rgb * u_brightnessContrast[0];
+            vec4 pixelColor = texture2D(u_image, v_texCoord);
+            vec3 c = pixelColor.rgb * u_brightnessContrast[0];
             gl_FragColor = vec4(
                 clamp(
                     (c - 0.5) * u_brightnessContrast[1] + 0.5,
                 0.0, 1.0),
-                1
+                pixelColor.a
             );
         }
         `
     }
 
     get contrast() {
-        return this.in.contrast.value || 1;
+        return this.in.contrast.value
     }
 
     get brightness() {
-        return this.in.brightness.value || 1;
+        return this.in.brightness.value;
     }
 
     _setParams(gl, program) {

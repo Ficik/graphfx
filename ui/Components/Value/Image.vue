@@ -1,7 +1,7 @@
 <template>
     <div
         class="image-value"
-        @click="download"
+        @click="onClick"
     >
         <canvas class="image-value__thumb" ref="thumb" />
         <canvas class="image-value__preview" ref="preview" />
@@ -14,8 +14,16 @@ import {paintToCanvas, mediaSize} from '../../../src/nodes/canvas.js'
 
 export default {
     props: {
+        io: {
+            type: null,
+            required: true,
+        },
         value: {
             type: null,
+            required: true,
+        },
+        direction: {
+            type: String,
             required: true,
         }
     },
@@ -34,7 +42,7 @@ export default {
     mounted() {
         this.$nextTick(() => {
             this.redraw();
-            this.value.onchange(this.redraw);
+            this.io.onchange(this.redraw);
         })
     },
     watch: {
@@ -44,9 +52,12 @@ export default {
             }
         }
     },
+    beforeDestroy() {
+        this.isRunning = false;
+    },
     methods: {
         redrawCanvas(canvas) {
-            const value = this.value.value;
+            const value = this.value;
             /** @type {HTMLCanvasElement} */
             const ctx = canvas.getContext('2d');
             if (!value) {
@@ -69,6 +80,35 @@ export default {
                 this.redrawCanvas(this.$refs.thumb);
                 this.redrawCanvas(this.$refs.preview)
             }
+        },
+        onClick() {
+            if (this.direction === 'output') {
+                this.download();
+            } else {
+                this.selectFile();
+            }
+        },
+        selectFile() {
+            const input = document.createElement('input');
+            window.$$input = input;
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.onchange = (event) => {
+                const files = event.target.files;
+                console.log(event);
+                if (files.length) {
+                    const fr = new FileReader()
+                    fr.onload = (event) => {
+                        const image = new Image();
+                        image.onload = () => {
+                            this.$emit('change', image);
+                        }
+                        image.src = event.target.result;
+                    }
+                    fr.readAsDataURL(files[0]);
+                }
+            }
+            input.click();
         },
         download() {
             const a = document.createElement('a');

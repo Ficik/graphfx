@@ -13,11 +13,30 @@ export default class GreenScreen extends WebGL {
 
     constructor() {
         super('GreenScreen', {
-            balance: 'Number',
-            screen: 'Color',
-            screenWeight: 'Number',
-            clipBlack: 'Number',
-            clipWhite: 'Number',
+            balance: {
+                type: 'Number',
+                default: 0.5,
+                step: 0.1,
+            },
+            screen: {
+                type: 'Color',
+                default: '#2CD6A4',
+            },
+            screenWeight: {
+                type: 'Number',
+                default: 1,
+                min: 0,
+                max: 1,
+                step: 0.1,
+            },
+            clipBlack: {
+                type: 'Number',
+                default: 0,
+            },
+            clipWhite: {
+                type: 'Number',
+                default: 1,
+            },
         })
     }
 
@@ -52,13 +71,13 @@ export default class GreenScreen extends WebGL {
             float screenFmax = max(max(screen.r, screen.g), screen.b); //Max. value of RGB
             vec3 screenPrimary = step(screenFmax, screen.rgb);
             float screenSecondaryComponents = dot(1.0 - screenPrimary, screen.rgb);
-            float screenSat = fmax - mix(secondaryComponents - fmin, secondaryComponents / 2.0, balance);
+            float screenSat = screenFmax - mix(screenSecondaryComponents - screenFmin, screenSecondaryComponents / 2.0, balance);
 
             pixelSat = fmax - mix(secondaryComponents - fmin, secondaryComponents / 2.0, balance);
 
             // solid pixel if primary color component is not the same as the screen color
             float diffPrimary = dot(abs(pixelPrimary - screenPrimary), vec3(1.0));
-            float solid = step(1.0, step(pixelSat, 0.1) + step(fmax, 0.1) + diffPrimary);
+            float solid = step(1.0, pixelSat + step(fmax, 0.1) + diffPrimary);
 
             /*
             Semi-transparent pixel if the primary component matches but if saturation is less
@@ -77,26 +96,27 @@ export default class GreenScreen extends WebGL {
     }
 
     get clipBlack() {
-        return (this.in.clipBlack.value || 0);
+        return this.in.clipBlack.value;
     }
 
     get clipWhite() {
-        return (this.in.clipWhite.value || 0);
+        return this.in.clipWhite.value;
     }
 
     get screenWeight() {
-        return (this.in.screenWeight.value || 1);
+        return this.in.screenWeight.value;
     }
 
     get screen() {
-        return hexColorTOvec3(this.in.screen.value || '#00FF00');
+        return hexColorTOvec3(this.in.screen.value);
     }
 
     get balance() {
-        return (this.in.balance.value || 0.5);
+        return this.in.balance.value;
     }
 
     _setParams(gl, program) {
+        console.log(this.balance, this.clipBlack, this.clipWhite, this.screenWeight)
         gl.uniform3f(gl.getUniformLocation(program, 'screen'), ...this.screen);
         gl.uniform1f(gl.getUniformLocation(program, 'balance'), this.balance);
         gl.uniform1f(gl.getUniformLocation(program, 'clipBlack'), this.clipBlack);

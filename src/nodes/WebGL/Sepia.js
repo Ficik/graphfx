@@ -5,7 +5,10 @@ export default class Sepia extends WebGL {
 
     constructor() {
         super('Sepia', {
-            amount: 'Number',
+            amount: {
+                type: 'Number',
+                default: 0,
+            },
         })
     }
 
@@ -22,7 +25,7 @@ export default class Sepia extends WebGL {
         uniform float amount;
 
         void main() {
-            vec3 color = texture2D(u_image, v_texCoord).rgb;
+            vec4 color = texture2D(u_image, v_texCoord);
             float r = color.r;
             float g = color.g;
             float b = color.b;
@@ -31,13 +34,13 @@ export default class Sepia extends WebGL {
             color.g = min(1.0, (r * 0.349 * amount) + (g * (1.0 - (0.314 * amount))) + (b * 0.168 * amount));
             color.b = min(1.0, (r * 0.272 * amount) + (g * 0.534 * amount) + (b * (1.0 - (0.869 * amount))));
 
-            gl_FragColor = vec4(color, 1);
+            gl_FragColor = color;
         }
         `
     }
 
     get amount() {
-        return this.in.amount.value || 0;
+        return this.in.amount.value;
     }
 
     /**

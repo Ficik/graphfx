@@ -5,54 +5,89 @@ export default class Compose extends Node {
 
     constructor(options) {
         super('Compose', {
-            fg: 'Image',
-            fgX: 'Number',
-            fgY: 'Number',
-            bg: 'Image',
-            bgX: 'Number',
-            bgY: 'Number',
-            width: 'Number',
-            height: 'Number',
-            mode: [
-                'source-over',
-                'source-in',
-                'source-out',
-                'source-atop',
-                'destination-over',
-                'destination-in',
-                'destination-out',
-                'destination-atop',
-                'lighter',
-                'copy',
-                'xor',
-                'multiply',
-                'screen',
-                'overlay',
-                'darken',
-                'lighten',
-                'color-dodge',
-                'color-burn',
-                'hard-light',
-                'soft-light',
-                'difference',
-                'exclusion',
-                'hue',
-                'saturation',
-                'color',
-                'luminosity',
-            ]
+            fg: {
+                type: 'Image'
+            },
+            fgX: {
+                type: 'Number',
+                default: 0,
+                step: 1,
+            },
+            fgY: {
+                type: 'Number',
+                default: 0,
+                step: 1,
+            },
+            bg: {
+                type: 'Image',
+            },
+            bgX: {
+                type: 'Number',
+                default: 0,
+                step: 1,
+            },
+            bgY: {
+                type: 'Number',
+                default: 0,
+                step: 1,
+            },
+            width: {
+                type: 'Number',
+                default: 100,
+                step: 1,
+                min: 1
+            },
+            height: {
+                type: 'Number',
+                default: 100,
+                step: 1,
+                min: 1,
+            },
+            mode: {
+                type: 'String',
+                default: 'source-over',
+                enum: [
+                    'source-over',
+                    'source-in',
+                    'source-out',
+                    'source-atop',
+                    'destination-over',
+                    'destination-in',
+                    'destination-out',
+                    'destination-atop',
+                    'lighter',
+                    'copy',
+                    'xor',
+                    'multiply',
+                    'screen',
+                    'overlay',
+                    'darken',
+                    'lighten',
+                    'color-dodge',
+                    'color-burn',
+                    'hard-light',
+                    'soft-light',
+                    'difference',
+                    'exclusion',
+                    'hue',
+                    'saturation',
+                    'color',
+                    'luminosity',
+                ]
+            }
         }, {
-            image: 'Image'
-        });
-        this.options = options;
+            image: {
+                type: 'Image'
+            }
+        }, options);
     }
 
     get width() {
-        return this.__in.width.value || this.options.width;
+        return this.__in.width.value;
     }
 
     get height() {
-        return this.__in.height.value || this.options.height;
+        return this.__in.height.value;
     }
 
     get fg() {
@@ -85,11 +120,10 @@ export default class Compose extends Node {
         }
     }
 
-    get mode() {
-        return this.__in.mode.value || 'source-over';
-    }
-
     __update() {
+        if (!this.width || !this.height) {
+            return;
+        }
         const canvas = createCanvas(this.width, this.height);
 
         if (this.bg) {

@@ -5,9 +5,18 @@ export default class HSV extends WebGL {
 
     constructor() {
         super('HSV', {
-            hue: 'Number',
-            saturation: 'Number',
-            value: 'Number',
+            hue: {
+                type: 'Number',
+                default: 0,
+            },
+            saturation: {
+                type: 'Number',
+                default: 1,
+            },
+            value: {
+                type: 'Number',
+                default: 1,
+            }
         })
     }
 
@@ -50,15 +59,15 @@ export default class HSV extends WebGL {
     }
 
     get hue() {
-        return ((this.in.hue.value || 0) % 360) / 360;
+        return ((this.in.hue.value) % 360) / 360;
     }
 
     get saturation() {
-        return this.in.saturation.value || 1;
+        return this.in.saturation.value;
     }
 
     get value() {
-        return this.in.value.value || 1;
+        return this.in.value.value;
     }
 
     _setParams(gl, program) {

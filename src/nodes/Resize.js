@@ -5,21 +5,33 @@ export default class Resize extends Node {
 
     constructor(options) {
         super('Resize', {
-            image: 'Image',
-            width: 'Number',
-            height: 'Number',
+            image: {
+                type: 'Image',
+            },
+            width: {
+                type: 'Number',
+                default: 100,
+                min: 1,
+            },
+            height: {
+                type: 'Number',
+                default: 100,
+                min: 1,
+            },
         }, {
-            image: 'Image'
+            image: {
+                type: 'Image',
+            }
         });
         this.options = options;
     }
 
     get width() {
-        return this.__in.width.value || this.options.width;
+        return this.__in.width.value;
     }
 
     get height() {
-        return this.__in.height.value || this.options.height;
+        return this.__in.height.value;
     }
 
     __update() {
