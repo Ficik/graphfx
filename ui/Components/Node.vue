@@ -2,7 +2,10 @@
     <div
         class="node"
     >
-        <div style="flex: 1" class="node__vars node__vars--input">
+        <div
+            class="node__title"
+        >{{node.name}}</div>
+        <div class="node__vars node__vars--input">
             <div
                 v-for="(type, name) in node.in.variables"
                 :key="name"
@@ -28,10 +31,7 @@
                 />
             </div>
         </div>
-        <div style="flex: 1">
-            <div>
-                {{node.name}}
-            </div>
+        <div  class="node__vars node__vars--output">
             <div
                 v-for="(type, name) in node.out.variables"
                 :key="name"
@@ -144,15 +144,32 @@ export default {
 .node {
     margin: 5px;
     padding: 5px 0;
-    display: inline-flex;
+    display: grid;
     flex-direction: row;
     background-color: #EEE;
     border-radius: 5px;
     box-shadow: 1px 1px 5px rgba(0,0,0,0.35);
+    grid-gap: 5px;
+    grid-template-areas:
+        "title title"
+        "in  out";
+}
+.node__title {
+    grid-area: title;
+    text-align: center;
+    border-bottom: 1px solid black;
 }
 
 .node__var {
     margin-bottom: 2px
+}
+
+.node__vars--input {
+    grid-area: in;
+}
+
+.node__vars--output {
+    grid-area: out;
 }
 
 .node__remove {

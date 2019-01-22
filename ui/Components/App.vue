@@ -68,6 +68,8 @@ export default {
     bottom: 0;
     top: 0;
     right: 0;
+    font-family: sans-serif;
+    font-size: 12px;
 }
 
 .app__toolbar {

@@ -2,8 +2,6 @@ import Node from '../Node';
 import webglUtils from '../lib/webgl-utils';
 import {createCanvas, mediaSize, paintToCanvas} from '../canvas';
 
-console.log(webglUtils);
-
 export default class WebGL extends Node {
 
     constructor(name, inputs={}) {
@@ -140,7 +138,7 @@ export default class WebGL extends Node {
         }
     }
 
-    __update() {
+    async __update() {
         const image = this.in.image.value;
         if (!image) return;
         const {width, height} = mediaSize(image);
@@ -217,7 +215,7 @@ export default class WebGL extends Node {
         // Draw the rectangle.
         gl.drawArrays(gl.TRIANGLES, 0, 6);
 
-        this.out.image.value = canvas;
+        this.out.image.value = await createImageBitmap(canvas);
     }
 
     setRectangle(gl, x, y, width, height) {

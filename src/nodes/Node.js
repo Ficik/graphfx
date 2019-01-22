@@ -46,13 +46,16 @@ export default class Node {
     reconnect({options}, outputs) {
         console.log('outputs', outputs)
         for (let name of Object.keys(options.in)) {
-            const {value, output} = options.in[name];
-            if (value) {
-                this.in[name].value = value;
-            }
+            const {output} = options.in[name];
             if (output) {
                 console.log('connecting', this.in[name].id, outputs[output])
                 this.in[name].connect(outputs[output]);
+            }
+        }
+        for (let name of Object.keys(options.in)) {
+            const {value} = options.in[name];
+            if (value) {
+                this.in[name].deserialize(value);
             }
         }
     }

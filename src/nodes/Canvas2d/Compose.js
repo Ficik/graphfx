@@ -1,10 +1,11 @@
-import Node from './Node';
-import {createCanvas, mediaSize, paintToCanvas} from './canvas';
+import Canvas2d from './Canvas2d';
+import {createCanvas, mediaSize, paintToCanvas} from '../canvas';
 
-export default class Compose extends Node {
+export default class Compose extends Canvas2d {
 
     constructor(options) {
         super('Compose', {
+            image: null,
             fg: {
                 type: 'Image'
             },
@@ -120,23 +121,30 @@ export default class Compose extends Node {
         }
     }
 
-    __update() {
-        if (!this.width || !this.height) {
+    /**
+     * @param {any} values
+     * @param {HTMLCanvasElement} canvas
+     * @param {CanvasRenderingContext2D} ctx
+     */
+    async render({width, height, mode}, canvas, ctx) {
+        if (!width || !height) {
             return;
         }
-        const canvas = createCanvas(this.width, this.height);
+        canvas.width = width;
+        canvas.height = height;
+
+        ctx.globalCompositeOperation = 'source-over';
 
         if (this.bg) {
             paintToCanvas(canvas, this.bg.image, this.bg);
         }
 
-        const ctx = canvas.getContext('2d');
-        ctx.globalCompositeOperation = this.mode;
+        ctx.globalCompositeOperation = mode;
 
         if (this.fg) {
             paintToCanvas(canvas, this.fg.image, this.fg);
         }
 
-        this.__out.image.value = canvas;
+        this.__out.image.value = await createImageBitmap(canvas);
     }
 }

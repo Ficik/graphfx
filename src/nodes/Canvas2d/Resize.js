@@ -1,13 +1,11 @@
-import Node from './Node';
-import {createCanvas, mediaSize, paintToCanvas} from './canvas';
+import Canvas2d from './Canvas2d';
+import {waitForMedia} from '../../utils';
+import {createCanvas, mediaSize, paintToCanvas} from '../canvas';
 
-export default class Resize extends Node {
+export default class Resize extends Canvas2d {
 
-    constructor(options) {
+    constructor() {
         super('Resize', {
-            image: {
-                type: 'Image',
-            },
             width: {
                 type: 'Number',
                 default: 100,
@@ -18,28 +16,26 @@ export default class Resize extends Node {
                 default: 100,
                 min: 1,
             },
-        }, {
-            image: {
-                type: 'Image',
-            }
-        });
-        this.options = options;
+        }, {});
     }
 
-    get width() {
-        return this.__in.width.value;
-    }
-
-    get height() {
-        return this.__in.height.value;
-    }
-
-    __update() {
-        const media = this.__in.image.value;
+    /**
+     * @param {any} values
+     * @param {HTMLCanvasElement} canvas
+     * @param {CanvasRenderingContext2D} ctx
+     */
+    async render({image: media, width, height}, canvas, ctx) {
+        await waitForMedia(media)
         if (!media) {
             return;
         }
-        const canvas = createCanvas(this.width, this.height);
+
+        if (!width || !height) {
+            return;
+        }
+
+        canvas.width = width;
+        canvas.height = height;
 
         const {width: srcWidth, height: srcHeight} = mediaSize(media);
         const {width: destWidth, height: destHeight} = mediaSize(canvas);
@@ -58,6 +54,6 @@ export default class Resize extends Node {
         newImage.left = (destWidth - newImage.width) / 2;
 
         paintToCanvas(canvas, media, newImage);
-        this.__out.image.value = canvas;
+        this.__out.image.value = await createImageBitmap(canvas);
     }
 }

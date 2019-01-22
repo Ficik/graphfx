@@ -8,6 +8,10 @@ export default class AbstractIOSet {
         this.variables = variables;
 
         for (let name of Object.keys(this.variables)) {
+            if (variables[name] === null) {
+                delete this.variables[name];
+                continue;
+            }
             this.__values[name] = this.__createProperty(name, variables[name]);
             Object.defineProperty(this, name, {
                 get() {

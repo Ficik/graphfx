@@ -89,7 +89,7 @@ export default class GreenScreen extends WebGL {
             vec4 pixel = mix(semiTransparentPixel, sourcePixel, solid);
             // vec4 pixel = vec4(sourcePixel.rgb, (1.0 - alpha));
 
-            gl_FragColor = vec4(pixel.rgb * pixel.a, pixel.a);
+            gl_FragColor = vec4(pixel.rgb * pixel.a, min(max(pixel.a, 0.0), 1.0));
             //gl_FragColor = vec4(min(1.0, max(pixel.r, 0.0)), min(1.0, max(pixel.g, 0.0)), min(1.0, max(pixel.b, 0.0)), min(1.0, max(pixel.a, 0.0)));
         }
         `
@@ -116,7 +116,6 @@ export default class GreenScreen extends WebGL {
     }
 
     _setParams(gl, program) {
-        console.log(this.balance, this.clipBlack, this.clipWhite, this.screenWeight)
         gl.uniform3f(gl.getUniformLocation(program, 'screen'), ...this.screen);
         gl.uniform1f(gl.getUniformLocation(program, 'balance'), this.balance);
         gl.uniform1f(gl.getUniformLocation(program, 'clipBlack'), this.clipBlack);

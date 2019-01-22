@@ -1,4 +1,5 @@
 import AbstractIO from './AbstractIO';
+import {serialize, deserialize} from './serializer';
 
 export default class Input extends AbstractIO {
 
@@ -19,6 +20,7 @@ export default class Input extends AbstractIO {
     set value(value) {
         this.__setValue(value);
         this.__owner.update(this.name);
+        this.__notifyListeners();
     }
 
     get output() {
@@ -30,6 +32,7 @@ export default class Input extends AbstractIO {
             this.disconnect();
             this.__output = output
             this.__output.onchange(this.__onchangelistener);
+            this.value = this.__output.value;
         }
     }
 
@@ -42,8 +45,15 @@ export default class Input extends AbstractIO {
 
     serialize() {
         return {
-            value: this.__output ? null : this.__value,
+            value: this.__output ? null : serialize(this.__value),
             output: this.__output ? this.__output.id: null,
+        }
+    }
+
+    deserialize(value) {
+        const deserializedValue = deserialize(value);
+        if (deserializedValue) {
+            this.value = deserializedValue;
         }
     }
 }

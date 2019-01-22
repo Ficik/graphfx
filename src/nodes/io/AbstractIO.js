@@ -1,4 +1,4 @@
-const isNil = (val) => val === null || val === undefined;
+import {isNil} from '../../utils';
 
 export const defaultConstrainSatisfied = (value) => {
     return !isNil(value);

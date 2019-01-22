@@ -2,15 +2,16 @@
     <div
         class="image-value"
         @click="onClick"
+        @mouseenter="isPreviewVisible = true"
+        @mouseleave="isPreviewVisible = false"
     >
         <canvas class="image-value__thumb" ref="thumb" />
         <canvas class="image-value__preview" ref="preview" />
     </div>
-
-
 </template>
 <script>
 import {paintToCanvas, mediaSize} from '../../../src/nodes/canvas.js'
+import _ from 'lodash';
 
 export default {
     props: {
@@ -27,25 +28,28 @@ export default {
             required: true,
         }
     },
-    watch: {
-        value: {
-            handler(value) {
-                this.redraw();
-            }
-        }
-    },
     data() {
         return {
             isRunning: true,
+            isPreviewVisible: false,
+            /*redrawThumb: _.throttle(() => {
+                console.log('redrawThum')
+            }, 500, {leading: true, trailing: true}),*/
+            redrawThumb: _.throttle(() => this.redrawCanvas(this.$refs.thumb), 500, {leading: true, trailing: true}),
         };
     },
     mounted() {
         this.$nextTick(() => {
             this.redraw();
-            this.io.onchange(this.redraw);
+            this.io.onchange(this.onChange);
         })
     },
     watch: {
+        isPreviewVisible(isVisible) {
+            if (isVisible) {
+                this.redraw();
+            }
+        },
         isRunning: {
             handler() {
                 this.redraw();
@@ -54,10 +58,16 @@ export default {
     },
     beforeDestroy() {
         this.isRunning = false;
+        if (this.io) {
+            this.io.offchange(this.onChange)
+        }
     },
     methods: {
+        onChange() {
+            this.redraw();
+        },
         redrawCanvas(canvas) {
-            const value = this.value;
+            const value = this.io.value;
             /** @type {HTMLCanvasElement} */
             const ctx = canvas.getContext('2d');
             if (!value) {
@@ -77,8 +87,11 @@ export default {
         },
         redraw() {
             if (this.isRunning) {
-                this.redrawCanvas(this.$refs.thumb);
-                this.redrawCanvas(this.$refs.preview)
+                this.redrawThumb();
+                // this.redrawCanvas(this.$refs.thumb);
+                if (this.isPreviewVisible) {
+                    this.redrawCanvas(this.$refs.preview)
+                }
             }
         },
         onClick() {
@@ -95,13 +108,13 @@ export default {
             input.accept = 'image/*';
             input.onchange = (event) => {
                 const files = event.target.files;
-                console.log(event);
                 if (files.length) {
                     const fr = new FileReader()
                     fr.onload = (event) => {
                         const image = new Image();
                         image.onload = () => {
                             this.$emit('change', image);
+                            this.onChange();
                         }
                         image.src = event.target.result;
                     }
@@ -124,11 +137,16 @@ export default {
 .image-value {
     position: relative;
 }
+.image-value__thumb, .image-value__preview {
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAJ0lEQVQoU2NsaGj4z4AG6uvr0YUYGIeCwv///2N4prGxEdMzQ0AhAChTL3KV95+lAAAAAElFTkSuQmCC);
+    background-repeat: repeat;
+}
+
 .image-value__thumb {
     width: 50px;
     height: 50px;
     object-fit: contain;
-    background-color: black;
+
     box-shadow: 0 0 6px;
 }
 

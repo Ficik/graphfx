@@ -15,10 +15,11 @@ export default {
     },
     render(h) {
         return h(
+            this.io.definition.enum ? SelectValue :
             this.io.type === 'Image' ? ImageValue :
+            this.io.type === 'String' ? StringValue :
             this.io.type === 'Number' ? StringValue :
             this.io.type === 'Color' ? StringValue :
-            this.io.definition.enum ? SelectValue :
             null,
         {
             props: {
