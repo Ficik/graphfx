@@ -1,15 +1,15 @@
 {
-  "name": "image-filter-pipeline",
+  "name": "graphfx",
   "version": "0.0.0",
-  "description": "",
-  "main": "webpack.config.js",
+  "description": "Graph image processing pipeline",
+  "main": "src/index.js",
   "scripts": {
     "dev": "webpack-dev-server --quiet --progress --watch --mode development",
     "test": "jest"
   },
-  "keywords": [],
+  "keywords": ["image processing", "image", "filters"],
   "author": "standa.fifik@gmail.com",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "@babel/core": "^7.2.2",
     "@babel/preset-env": "^7.2.3",
