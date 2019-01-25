@@ -7,6 +7,12 @@ export default class ToBlob extends Node {
             image: {
                 type: 'Image'
             },
+            width: {
+                type: 'Number',
+            },
+            height: {
+                type: 'Number',
+            }
         });
         this.start();
     }
@@ -18,8 +24,8 @@ export default class ToBlob extends Node {
         console.log(last(devices));
         const stream = await navigator.mediaDevices.getUserMedia({
             video: {
-                width: { min: 1024, ideal: 1920, max: 1920 },
-                height: { min: 776, ideal: 1080, max: 1080 },
+                width: { min: 480, ideal: 1920, max: 1920 },
+                height: { min: 320, ideal: 1080, max: 1080 },
                 deviceId: last(devices).deviceId
             },
         });
@@ -36,6 +42,8 @@ export default class ToBlob extends Node {
             if (lastFrameTime !== currentTime) {
                 lastFrameTime = currentTime;
                 this.out.image.value = video;
+                this.out.width.value = video.videoWidth;
+                this.out.height.value = video.videoHeight;
             }
             requestAnimationFrame(feedLoop);
         };
