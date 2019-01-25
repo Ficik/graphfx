@@ -65,7 +65,6 @@ export default class Resize extends Canvas2d {
         ctx.textAlign = textAlign;
         const x = textAlign === 'center' ? canvas.width /2 :
             textAlign === 'left' ? 0 : canvas.width;
-        console.log(text.split('\\n'));
         text.split('\\n').forEach((line, index) => {
             ctx.fillText(line, x, fontSize * (1 + index));
         });

@@ -10,3 +10,4 @@ export const waitForMedia = async (media) => {
 }
 
 export const setImmediate = (fn) => Promise.resolve().then(fn);
+

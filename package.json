@@ -1,6 +1,6 @@
 {
   "name": "graphfx",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Graph image processing pipeline",
   "main": "src/index.js",
   "scripts": {

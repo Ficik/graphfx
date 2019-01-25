@@ -5,20 +5,28 @@ export default class Node {
 
     constructor(name, inputDefinition, outputDefiniton, options) {
         this.name = name;
+        this.uid = uuidv4();
         this.id = uuidv4();
         this.__in = new Inputs(inputDefinition, this);
         this.__out = new Outputs(outputDefiniton, this);
         this.__in.update = (name) => this.__update([name]);
         this.__scheduledUpdate = false;
+        this.__currentUpdate = Promise.resolve();
+        this._stopped = false;
     }
 
     __update(changes) {
-        if (!this.__scheduledUpdate) {
+        if (!this.__scheduledUpdate && !this._stopped) {
             this.__scheduledUpdate = true;
-            Promise.resolve()
-                .then(() => {
+            this.__currentUpdate = this.__currentUpdate
+                .then(async () => {
+                    const startTag =`graphfx-update-start:${this.uid}`;
+                    const endTag = `graphfx-update-end:${this.uid}`
                     this.__scheduledUpdate = false;
-                    this._update();
+                    performance.mark(startTag)
+                    await this._update();
+                    performance.mark(endTag)
+                    performance.measure(`GraphFX<${this.name}>`, startTag, endTag)
                 });
         }
     }
@@ -57,11 +65,9 @@ export default class Node {
     }
 
     reconnect({options}, outputs) {
-        console.log('outputs', outputs)
         for (let name of Object.keys(options.in)) {
             const {output} = options.in[name];
             if (output) {
-                console.log('connecting', this.in[name].id, outputs[output])
                 this.in[name].connect(outputs[output]);
             }
         }
@@ -69,9 +75,18 @@ export default class Node {
             this.out[name].deserialize(options.out[name]);
         }
         for (let name of Object.keys(options.in)) {
-            console.log(options.in[name]);
             this.in[name].deserialize(options.in[name]);
         }
+    }
+
+    destroy() {
+        this._stopped = true;
+        Promise.resolve()
+            .then(() => {
+                for (let input of this.in) {
+                    input.disconnect();
+                }
+            })
     }
 };
 

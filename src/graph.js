@@ -38,6 +38,12 @@ export default class Graph {
         return results;
     }
 
+    destroy() {
+        for(let {node} of this.nodes) {
+            node.destroy();
+        }
+    }
+
 }
 
 

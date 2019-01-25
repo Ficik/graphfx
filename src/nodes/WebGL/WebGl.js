@@ -21,6 +21,12 @@ export default class WebGL extends Node {
         });
     }
 
+    destroy() {
+        this.canvas = null;
+        this.program = null;
+        super.destroy();
+    }
+
     get vert() {
         return `
         attribute vec2 a_position;
@@ -147,6 +153,9 @@ export default class WebGL extends Node {
         const image = this.in.image.value;
         if (!image) return;
         const {width, height} = mediaSize(image);
+        if (width === 0 || height === 0) {
+            return;
+        }
         this.setup();
         const canvas = this.canvas;
         canvas.width = width;
@@ -222,8 +231,12 @@ export default class WebGL extends Node {
 
         const result = await createImageBitmap(canvas);
         this.out.image.value = result;
-        this.out.width.value = this.out.image.value.width;
-        this.out.height.value = this.out.image.value.height;
+        if (this.out.width.value !== this.out.image.value.width) {
+            this.out.width.value = this.out.image.value.width;
+        }
+        if (this.out.height.value !== this.out.image.value.height) {
+            this.out.height.value = this.out.image.value.height;
+        }
     }
 
     setRectangle(gl, x, y, width, height) {

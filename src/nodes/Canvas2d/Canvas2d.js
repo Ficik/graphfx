@@ -25,6 +25,11 @@ export default class Canvas2d extends Node {
         this.__canvas = document.createElement('canvas');
     }
 
+    destroy() {
+        this.__canvas = null;
+        super.destroy();
+    }
+
     async _update() {
         const values = {};
         for (let name of Object.keys(this.in.variables)) {
@@ -37,8 +42,12 @@ export default class Canvas2d extends Node {
         const result = await this.render(values, this.__canvas, ctx);
         if (result instanceof ImageBitmap) {
             this.__out.image.value = result;
-            this.out.width.value = this.out.image.value.width;
-            this.out.height.value = this.out.image.value.height;
+            if (this.out.width.value !== this.out.image.value.width) {
+                this.out.width.value = this.out.image.value.width;
+            }
+            if (this.out.height.value !== this.out.image.value.height) {
+                this.out.height.value = this.out.image.value.height;
+            }
         }
     }
 

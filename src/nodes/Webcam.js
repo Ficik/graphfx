@@ -1,6 +1,6 @@
 import Node from './Node';
 
-export default class ToBlob extends Node {
+export default class Webcam extends Node {
 
     constructor(options) {
         super('Webcam', {}, {
@@ -14,14 +14,14 @@ export default class ToBlob extends Node {
                 type: 'Number',
             }
         });
-        this.start();
+        this.start()
+            .catch(console.error.bind(console))
     }
 
 
     async start() {
         const devices = (await navigator.mediaDevices.enumerateDevices()).filter((d) => d.kind === 'videoinput')
         const last = (ary) => ary[ary.length - 1];
-        console.log(last(devices));
         const stream = await navigator.mediaDevices.getUserMedia({
             video: {
                 width: { min: 480, ideal: 1920, max: 1920 },
@@ -29,7 +29,6 @@ export default class ToBlob extends Node {
                 deviceId: last(devices).deviceId
             },
         });
-        console.log(stream)
         /** @type {HTMLVideoElement} */
 
         const video = document.createElement('video');
@@ -45,7 +44,11 @@ export default class ToBlob extends Node {
                 this.out.width.value = video.videoWidth;
                 this.out.height.value = video.videoHeight;
             }
-            requestAnimationFrame(feedLoop);
+            if (!this._stopped) {
+                requestAnimationFrame(feedLoop);
+            } else {
+                video.src = null;
+            }
         };
         feedLoop();
     }

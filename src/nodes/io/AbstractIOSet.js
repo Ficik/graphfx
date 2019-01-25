@@ -21,6 +21,12 @@ export default class AbstractIOSet {
         }
     }
 
+    *[Symbol.iterator]() {
+        for (let name of Object.keys(this.variables)) {
+            yield this.__values[name];
+        }
+    }
+
     __createProperty(name, definition) {
 
     }
