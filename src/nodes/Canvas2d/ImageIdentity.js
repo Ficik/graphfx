@@ -20,7 +20,6 @@ export default class ImageIdentity extends Node {
         const dataUrl = canvas.toDataURL()
         const i = new Image();
         i.src = dataUrl;
-        await waitForMedia(i);
-        this.__out.image.value = i;
+        return await waitForMedia(i);
     }
 }

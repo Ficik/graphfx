@@ -54,6 +54,6 @@ export default class Resize extends Canvas2d {
         newImage.left = (destWidth - newImage.width) / 2;
 
         paintToCanvas(canvas, media, newImage);
-        this.__out.image.value = await createImageBitmap(canvas);
+        return await createImageBitmap(canvas);
     }
 }

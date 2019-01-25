@@ -9,10 +9,22 @@ export default class Node {
         this.__in = new Inputs(inputDefinition, this);
         this.__out = new Outputs(outputDefiniton, this);
         this.__in.update = (name) => this.__update([name]);
+        this.__scheduledUpdate = false;
     }
 
     __update(changes) {
-        throw new Error('__update method not implemented');
+        if (!this.__scheduledUpdate) {
+            this.__scheduledUpdate = true;
+            Promise.resolve()
+                .then(() => {
+                    this.__scheduledUpdate = false;
+                    this._update();
+                });
+        }
+    }
+
+    _update(){
+        throw new Error('_update method not implemented');
     }
 
     /**

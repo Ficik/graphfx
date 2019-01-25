@@ -9,7 +9,7 @@ export default class ImageIdentity extends Node {
         });
     }
 
-    __update() {
+    _update() {
         this.__out.image.value = this.__in.image.value;
     }
 }

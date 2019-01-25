@@ -23,7 +23,7 @@ export default class ToBlob extends Node {
         return this.options.quality;
     }
 
-    __update() {
+    _update() {
         const {width, height} = this.__in.image.value;
         const canvas = createCanvas(width, height);
         const ctx = canvas.getContext('2d');

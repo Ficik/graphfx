@@ -20,7 +20,7 @@ export default class Fill extends Canvas2d {
                 default: '#FFFFFF'
             }
         }, {});
-        this.__update();
+        this._update();
     }
 
     async render({color, width, height}, canvas, ctx) {
@@ -28,6 +28,6 @@ export default class Fill extends Canvas2d {
         canvas.height = height;
         ctx.fillStyle = color;
         ctx.fillRect(0, 0, width, height);
-        this.__out.image.value = await createImageBitmap(canvas);
+        return await createImageBitmap(canvas);
     }
 }

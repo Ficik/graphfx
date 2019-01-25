@@ -54,7 +54,7 @@ export default class Resize extends Canvas2d {
                 ]
             }
         }, {});
-        this.__update();
+        this._update();
     }
 
     async render({font, fontSize, text, color, width, height, textAlign, fontStyle}, canvas, ctx) {
@@ -69,6 +69,6 @@ export default class Resize extends Canvas2d {
         text.split('\\n').forEach((line, index) => {
             ctx.fillText(line, x, fontSize * (1 + index));
         });
-        this.__out.image.value = await createImageBitmap(canvas);
+        return await createImageBitmap(canvas);
     }
 }

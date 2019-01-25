@@ -1,11 +1,16 @@
 export {default as Webcam} from './Webcam';
+// 2D
 export {default as Resize} from './Canvas2d/Resize';
 export {default as Compose} from './Canvas2d/Compose';
 export {default as Fill} from './Canvas2d/Fill';
 // export {default as ImageIdentity} from './Canvas2d/ImageIdentity';
- export {default as Text} from './Canvas2d/Text';
+export {default as Text} from './Canvas2d/Text';
+ // WebGL
 export {default as BrightnessContrast} from './WebGL/BrightnessContrast';
 export {default as HSV} from './WebGL/HSV';
 export {default as Sepia} from './WebGL/Sepia';
 export {default as GreenScreen} from './WebGL/Greenscreen';
-export {default as Channels} from './WebGL/Channels';
+export {default as Channels} from './WebGL/Channels'
+// Math
+export {default as Numbers} from './Math/Numbers';
+export {default as NumberBinaryOperation} from './Math/NumberBinaryOperation';

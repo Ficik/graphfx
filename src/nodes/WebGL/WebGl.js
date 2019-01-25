@@ -12,6 +12,12 @@ export default class WebGL extends Node {
             image: {
                 type: 'Image',
             },
+            width: {
+                type: 'Number',
+            },
+            height: {
+                type: 'Number',
+            }
         });
     }
 
@@ -137,7 +143,7 @@ export default class WebGL extends Node {
         }
     }
 
-    async __update() {
+    async _update() {
         const image = this.in.image.value;
         if (!image) return;
         const {width, height} = mediaSize(image);
@@ -214,7 +220,10 @@ export default class WebGL extends Node {
         // Draw the rectangle.
         gl.drawArrays(gl.TRIANGLES, 0, 6);
 
-        this.out.image.value = await createImageBitmap(canvas);
+        const result = await createImageBitmap(canvas);
+        this.out.image.value = result;
+        this.out.width.value = this.out.image.value.width;
+        this.out.height.value = this.out.image.value.height;
     }
 
     setRectangle(gl, x, y, width, height) {
