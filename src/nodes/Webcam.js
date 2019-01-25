@@ -18,8 +18,8 @@ export default class ToBlob extends Node {
         console.log(last(devices));
         const stream = await navigator.mediaDevices.getUserMedia({
             video: {
-                width: { min: 1024, ideal: 1280, max: 1920 },
-                height: { min: 776, ideal: 720, max: 1080 },
+                width: { min: 1024, ideal: 1920, max: 1920 },
+                height: { min: 776, ideal: 1080, max: 1080 },
                 deviceId: last(devices).deviceId
             },
         });

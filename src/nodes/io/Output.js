@@ -37,4 +37,15 @@ export default class Output extends AbstractIO {
         this.__listeners = this.__listeners
             .filter((l) => l !== listener);
     }
+
+
+    serialize() {
+        return {
+            label: this.label,
+        };
+    }
+
+    deserialize({label}) {
+        this.label = label;
+    }
 }

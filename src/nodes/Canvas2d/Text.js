@@ -16,6 +16,16 @@ export default class Resize extends Canvas2d {
                 min: 1,
                 default: 50,
             },
+            fontStyle: {
+                type: 'String',
+                default: 'normal',
+                enum: [
+                    'normal',
+                    'bold',
+                    'italic',
+                    'bold italic',
+                ]
+            },
             font: {
                 type: 'String',
                 default: 'Arial',
@@ -33,17 +43,32 @@ export default class Resize extends Canvas2d {
             color: {
                 type: 'Color',
                 default: '#FFFFFF'
+            },
+            textAlign: {
+                type: 'String',
+                default: 'center',
+                enum: [
+                    'left',
+                    'center',
+                    'right',
+                ]
             }
         }, {});
+        this.__update();
     }
 
-    async render({font, fontSize, text, color, width, height}, canvas, ctx) {
+    async render({font, fontSize, text, color, width, height, textAlign, fontStyle}, canvas, ctx) {
         canvas.width = width;
         canvas.height = height;
-        ctx.font = `${fontSize}px ${font}`;
+        ctx.font = `${fontStyle} ${fontSize}px ${font}`;
         ctx.fillStyle = color;
-        ctx.textAlign = 'center';
-        ctx.fillText(text, canvas.width/2, canvas.height/2);
+        ctx.textAlign = textAlign;
+        const x = textAlign === 'center' ? canvas.width /2 :
+            textAlign === 'left' ? 0 : canvas.width;
+        console.log(text.split('\\n'));
+        text.split('\\n').forEach((line, index) => {
+            ctx.fillText(line, x, fontSize * (1 + index));
+        });
         this.__out.image.value = await createImageBitmap(canvas);
     }
 }

@@ -5,23 +5,11 @@
  * @returns {HTMLCanvasElement}
  */
 export const createCanvas = (width, height) => {
-    if (window.name !== 'nodejs') {
-        const canvas = document.createElement('canvas');
-        canvas.width = width;
-        canvas.height = height;
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
 
-        return canvas;
-    } else {
-        const {createCanvas} = require('canvas');
-        const canvas = createCanvas(width, height);
-        canvas.toBlob = (callback, type, quality) => {
-            canvas.toBuffer((err, data) => {
-                callback(new Blob([data]));
-            }, type)
-            canvas
-        }
-        return canvas;
-    }
+    return canvas;
 }
 
 /**

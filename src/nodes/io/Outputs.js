@@ -14,7 +14,12 @@ export default class Outputs extends AbstractIOSet {
         return `${this.__owner.id}-out`;
     }
 
+
     serialize() {
-        return null;
+        const res = {};
+        for (let name of Object.keys(this.variables)) {
+            res[name] = this.__values[name].serialize();
+        }
+        return res;
     }
 }

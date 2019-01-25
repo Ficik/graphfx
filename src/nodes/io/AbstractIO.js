@@ -38,6 +38,7 @@ export default class AbstractIO {
         this.__owner = owner
         this.__definition = definition;
         this.__value = null;
+        this.label = null;
         this.__listeners = [];
     }
 

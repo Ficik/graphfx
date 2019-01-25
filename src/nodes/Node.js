@@ -35,6 +35,7 @@ export default class Node {
             name: this.name,
             options: {
                 in: this.in.serialize(),
+                out: this.out.serialize(),
             },
         }
     }
@@ -52,11 +53,12 @@ export default class Node {
                 this.in[name].connect(outputs[output]);
             }
         }
+        for (let name of Object.keys(options.out)) {
+            this.out[name].deserialize(options.out[name]);
+        }
         for (let name of Object.keys(options.in)) {
-            const {value} = options.in[name];
-            if (value) {
-                this.in[name].deserialize(value);
-            }
+            console.log(options.in[name]);
+            this.in[name].deserialize(options.in[name]);
         }
     }
 };

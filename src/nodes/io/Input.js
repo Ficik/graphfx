@@ -45,15 +45,17 @@ export default class Input extends AbstractIO {
 
     serialize() {
         return {
+            label: this.label,
             value: this.__output ? null : serialize(this.__value),
             output: this.__output ? this.__output.id: null,
         }
     }
 
-    deserialize(value) {
+    deserialize({value, label}) {
         const deserializedValue = deserialize(value);
         if (deserializedValue) {
             this.value = deserializedValue;
         }
+        this.label = label
     }
 }

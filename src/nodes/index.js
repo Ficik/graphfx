@@ -1,6 +1,7 @@
 export {default as Webcam} from './Webcam';
 export {default as Resize} from './Canvas2d/Resize';
 export {default as Compose} from './Canvas2d/Compose';
+export {default as Fill} from './Canvas2d/Fill';
 // export {default as ImageIdentity} from './Canvas2d/ImageIdentity';
  export {default as Text} from './Canvas2d/Text';
 export {default as BrightnessContrast} from './WebGL/BrightnessContrast';

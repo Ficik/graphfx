@@ -1,5 +1,4 @@
 import Node from '../Node';
-import webglUtils from '../lib/webgl-utils';
 import {createCanvas, mediaSize, paintToCanvas} from '../canvas';
 
 export default class WebGL extends Node {
