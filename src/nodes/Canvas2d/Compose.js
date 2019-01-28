@@ -145,6 +145,6 @@ export default class Compose extends Canvas2d {
             paintToCanvas(canvas, this.fg.image, this.fg);
         }
 
-        return await createImageBitmap(canvas);
+        return canvas;
     }
 }

@@ -25,6 +25,7 @@ export const createCanvas = (width, height) => {
  * @returns {{width: Number, height: Number}}
  */
 export const mediaSize = (media) =>
+  (media === null) ? {width: null, height: null} :
   (media instanceof HTMLVideoElement) ? {width: media.videoWidth, height: media.videoHeight} :
   (media instanceof HTMLImageElement) ? {width: media.naturalWidth, height: media.naturalHeight} :
   {width: media.width, height: media.height};

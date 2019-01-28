@@ -28,6 +28,6 @@ export default class Fill extends Canvas2d {
         canvas.height = height;
         ctx.fillStyle = color;
         ctx.fillRect(0, 0, width, height);
-        return await createImageBitmap(canvas);
+        return canvas;
     }
 }

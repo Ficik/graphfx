@@ -6,6 +6,7 @@ export const defaultConstrainSatisfied = (value) => {
 
 export const imageConstrainSatisfied = (value) => {
     return value instanceof HTMLCanvasElement ||
+        value instanceof OffscreenCanvas ||
         value instanceof Image ||
         value instanceof HTMLVideoElement ||
         value instanceof ImageData ||

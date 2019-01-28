@@ -68,6 +68,6 @@ export default class Resize extends Canvas2d {
         text.split('\\n').forEach((line, index) => {
             ctx.fillText(line, x, fontSize * (1 + index));
         });
-        return await createImageBitmap(canvas);
+        return canvas;
     }
 }
