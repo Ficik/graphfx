@@ -1,6 +1,6 @@
 import Node from '../Node';
 import {createCanvas, mediaSize, paintToCanvas} from '../canvas';
-import {canvasPoolWebGL} from '../../canvas/CanvasPool';
+import {canvasPool2D} from '../../canvas/CanvasPool';
 
 export default class WebGL extends Node {
 
@@ -139,7 +139,7 @@ export default class WebGL extends Node {
 
     setup() {
         if (!this.canvas) {
-            this.canvas = new OffscreenCanvas(1,1);
+            this.canvas = document.createElement('canvas')
             this.program = null;
         }
         const gl = this.canvas.getContext('webgl');
@@ -234,15 +234,22 @@ export default class WebGL extends Node {
         // Draw the rectangle.
         gl.drawArrays(gl.TRIANGLES, 0, 6);
 
-        const result = canvas.transferToImageBitmap();
-        // this.canvas = null;
+        const resultCanvas = canvasPool2D.createCanvas();
+        resultCanvas.width = 1;
+        resultCanvas.height = 1;
+        resultCanvas.acquire();
+        resultCanvas.width = canvas.width;
+        resultCanvas.height = canvas.height;
+        const ctx = resultCanvas.getContext('2d');
+        ctx.drawImage(canvas, 0, 0);
+
         if (image.release) {
             image.release();
         }
         if (this.out.image.value && this.out.image.value.release) {
             this.out.image.value.release();
         }
-        this.out.image.value = result;
+        this.out.image.value = resultCanvas;
         if (this.out.width.value !== this.out.image.value.width) {
             this.out.width.value = this.out.image.value.width;
         }

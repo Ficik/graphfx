@@ -8,6 +8,7 @@ class CanvasPool {
     }
 
     __createNewCanvas() {
+        console.log('create new canvas');
         const canvas = (this.__ctx !== 'webgl') ? new OffscreenCanvas(1,1) : document.createElement('canvas');
         canvas.acquire = this.acquireCanvas.bind(this, canvas);
         canvas.release = this.releaseCanvas.bind(this, canvas);
