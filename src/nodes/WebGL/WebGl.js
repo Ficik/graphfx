@@ -30,10 +30,13 @@ export default class WebGL extends Node {
 
     get vert() {
         return `
+        precision mediump float;
         attribute vec2 a_position;
         attribute vec2 a_texCoord;
 
         uniform vec2 u_resolution;
+        uniform vec2 u_textureSize;
+        uniform float u_flip_y;
 
         varying vec2 v_texCoord;
 
@@ -47,7 +50,7 @@ export default class WebGL extends Node {
            // convert from 0->2 to -1->+1 (clipspace)
            vec2 clipSpace = zeroToTwo - 1.0;
 
-           gl_Position = vec4(clipSpace * vec2(1, -1), 0, 1);
+           gl_Position = vec4(clipSpace * vec2(1, u_flip_y), 0, 1);
 
            // pass the texCoord to the fragment shader
            // The GPU will interpolate this value between points.
@@ -133,6 +136,37 @@ export default class WebGL extends Node {
         return texture;
     }
 
+    _createFrameBuffer(gl, {width, height}) {
+        const texture = this.createTexture(gl);
+
+        const frameBuffer = gl.createFramebuffer();
+        gl.texImage2D(
+            gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0,
+            gl.RGBA, gl.UNSIGNED_BYTE, null);
+
+        gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuffer);
+        gl.framebufferTexture2D(
+            gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
+        return {frameBuffer, texture};
+    }
+
+    _passes() {
+        return [
+            (gl, program, image) => {
+                console.log('pass1')
+                this._setParams(gl, program);
+            },
+            (gl, program, image) => {
+                console.log('pass2')
+                this._setParams(gl, program);
+            },
+            (gl, program, image) => {
+                console.log('pass3')
+                this._setParams(gl, program);
+            }
+        ]
+    }
+
     _setParams(gl, program) {
 
     }
@@ -146,7 +180,6 @@ export default class WebGL extends Node {
         if (!this.program) {
             this.program = this.compileProgram(gl);
             gl.useProgram(this.program);
-            this.createTexture(gl);
         }
     }
 
@@ -161,6 +194,7 @@ export default class WebGL extends Node {
         if (width === 0 || height === 0) {
             return;
         }
+
         this.setup();
         const canvas = this.canvas;
         canvas.width = width;
@@ -168,6 +202,14 @@ export default class WebGL extends Node {
 
         const gl = canvas.getContext('webgl');
         const program = this.program;
+
+        const frameBuffers = [
+            this._createFrameBuffer(gl, {width, height}),
+            this._createFrameBuffer(gl, {width, height}),
+        ];
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+
+        this.createTexture(gl);
 
         gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
         gl.clearColor(0, 0, 0, 0);
@@ -177,12 +219,12 @@ export default class WebGL extends Node {
         const positionLocation = gl.getAttribLocation(program, "a_position");
         const texcoordLocation = gl.getAttribLocation(program, "a_texCoord");
         const resolutionLocation = gl.getUniformLocation(program, "u_resolution");
+        const flipLocation = gl.getUniformLocation(program, "u_flip_y");
 
         if (this.image) {
             // Upload the image into the texture.
             gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, await createImageBitmap(this.image));
         }
-
 
         const texcoordBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, texcoordBuffer);
@@ -226,13 +268,27 @@ export default class WebGL extends Node {
         gl.vertexAttribPointer(
             texcoordLocation, size, type, normalize, stride, offset);
 
-        // set the resolution
-        gl.uniform2f(resolutionLocation, gl.canvas.width, gl.canvas.height);
+        const passes = this._passes();
+        for (let iter = 0; iter < passes.length; iter++) {
+            const frameBuffer = frameBuffers[iter%2];
+            if (iter === passes.length -1) { // last
+                gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+                gl.uniform1f(flipLocation, -1);
+            } else {
+                gl.uniform1f(flipLocation, 1);
+                gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuffer.frameBuffer);
+            }
 
-        this._setParams(gl, program);
+            passes[iter](gl, program);
+            // set the resolution
+            gl.uniform2f(resolutionLocation, gl.canvas.width, gl.canvas.height);
+            gl.uniform2f(gl.getUniformLocation(program, "u_textureSize"), width, height);
 
-        // Draw the rectangle.
-        gl.drawArrays(gl.TRIANGLES, 0, 6);
+            // Draw the rectangle.
+            gl.drawArrays(gl.TRIANGLES, 0, 6);
+
+            gl.bindTexture(gl.TEXTURE_2D, frameBuffer.texture);
+        }
 
         const resultCanvas = canvasPool2D.createCanvas();
         resultCanvas.width = 1;
