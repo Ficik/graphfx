@@ -130,6 +130,10 @@ export default class Compose extends Canvas2d {
         if (!width || !height) {
             return;
         }
+        if (!this.bg && !this.fg) {
+            return;
+        }
+
         canvas.width = width;
         canvas.height = height;
 

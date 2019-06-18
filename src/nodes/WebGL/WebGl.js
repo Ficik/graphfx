@@ -153,17 +153,8 @@ export default class WebGL extends Node {
     _passes() {
         return [
             (gl, program, image) => {
-                console.log('pass1')
                 this._setParams(gl, program);
             },
-            (gl, program, image) => {
-                console.log('pass2')
-                this._setParams(gl, program);
-            },
-            (gl, program, image) => {
-                console.log('pass3')
-                this._setParams(gl, program);
-            }
         ]
     }
 
@@ -186,7 +177,9 @@ export default class WebGL extends Node {
     async _update() {
 
         const image = this.in.image.value;
-        if (!image) return;
+        if (!image) {
+            return;
+        }
         if (image.acquire) {
             image.acquire();
         }

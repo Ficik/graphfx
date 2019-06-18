@@ -1,5 +1,6 @@
 import {Inputs, Outputs} from './io';
 import uuidv4 from 'uuid/v4';
+import {MultiSubject} from '../helpers/listener';
 
 export default class Node {
 
@@ -12,13 +13,18 @@ export default class Node {
         this.__in.update = (name) => this.__update([name]);
         this.__scheduledUpdate = false;
         this.__currentUpdate = Promise.resolve();
+        this.__running = false;
         this._stopped = false;
+        this.subject = new MultiSubject(['running']);
     }
 
     __update(changes) {
         if (!this.__scheduledUpdate && !this._stopped) {
             this.__scheduledUpdate = true;
             this.__currentUpdate = this.__currentUpdate
+                .then(() => {
+                    this._running = true;
+                })
                 .then(async () => {
                     const startTag =`graphfx-update-start:${this.uid}`;
                     const endTag = `graphfx-update-end:${this.uid}`
@@ -27,12 +33,30 @@ export default class Node {
                     await this._update();
                     performance.mark(endTag)
                     performance.measure(`GraphFX<${this.name}>`, startTag, endTag)
+                })
+                .then(() => {
+                    this._running = false;
+                })
+                .catch((err) => {
+                    this._running = false;
+                    throw err;
                 });
         }
     }
 
     _update(){
         throw new Error('_update method not implemented');
+    }
+
+    get _running() {
+        return this.__running;
+    }
+
+    set _running(val) {
+        if (this.__running !== val) {
+            this.__running = val;
+            this.subject.next('running', this.__running);
+        }
     }
 
     /**

@@ -4,7 +4,7 @@ import WebGL from './WebGl';
 export default class Channels extends WebGL {
 
     constructor() {
-        super('Greyscale by channel', {
+        super('Channels', {
             red: {
                 type: 'Number',
                 default: 1,

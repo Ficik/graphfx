@@ -1,10 +1,14 @@
 import * as nodes from './nodes';
+import {MultiSubject} from './helpers/listener';
 
 
 export default class Graph {
 
     constructor() {
         this.nodes = [];
+        this.__nodesActive = 0;
+        this.__nodesActiveDebounce = null;
+        this.subject = new MultiSubject(['running', 'stopped']);
     }
 
     serialize() {
@@ -17,6 +21,19 @@ export default class Graph {
     static deserialize(nodes) {
         const graph = new Graph();
         graph.nodes = createNodes(nodes);
+        for (let {node} of graph.nodes) {
+          node.subject.on('running', (isRunning) => {
+            graph.__nodesActive += isRunning ? 1 : -1;
+            clearTimeout(graph.__nodesActiveDebounce);
+            graph.__nodesActiveDebounce = setTimeout(() => {
+              if (graph.__nodesActive > 0) {
+                graph.subject.next('running');
+              } else {
+                graph.subject.next('stopped');
+              }
+            }, 16);
+          });
+        }
         return graph;
     }
 
