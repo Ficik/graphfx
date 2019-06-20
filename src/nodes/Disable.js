@@ -26,6 +26,9 @@ export default class Disable extends Node {
     async _update() {
       if (!this.in.disabled.value) {
         this.out.image.value = this.in.image.value;
+        if (!this.out.image.value) {
+          return;
+        }
         if (this.out.width.value !== this.out.image.value.width) {
           this.out.width.value = this.out.image.value.width;
         }
