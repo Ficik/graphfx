@@ -16,3 +16,7 @@ export {default as Blur} from './WebGL/Blur';
 // Math
 export {default as Numbers} from './Math/Numbers';
 export {default as NumberBinaryOperation} from './Math/NumberBinaryOperation';
+// Helpers
+export {default as Font} from './Font';
+export {default as Disable} from './Disable';
+// export {default as Synchronize} from './Synchronize';

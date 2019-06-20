@@ -2,6 +2,8 @@ import Canvas2d from './Canvas2d';
 import {waitForMedia} from '../../utils';
 import {createCanvas, mediaSize, paintToCanvas} from '../canvas';
 
+const isEmpty = (x) => !x || Object.keys(x).length === 0;
+
 export default class Resize extends Canvas2d {
 
     constructor() {
@@ -27,7 +29,7 @@ export default class Resize extends Canvas2d {
                 ]
             },
             font: {
-                type: 'String',
+                type: 'Font', // {name, url, fontface}
                 default: 'Arial',
             },
             width: {
@@ -57,10 +59,38 @@ export default class Resize extends Canvas2d {
         this._update();
     }
 
+    /**
+     *
+     * @param {{name: string, url: string, fontface: FontFace}} font
+     */
+    async loadFont(font) {
+        if (typeof font === 'string') {
+            return font
+        } else if (!font) {
+            return;
+        }
+
+        if (font.name && !font.url && !font.fontface) {
+            return name;
+        }
+        if (font.name && font.url && isEmpty(font.fontface)) {
+            font.fontface = new FontFace(font.name, font.url);
+        }
+
+        if (font.fontface) {
+            await font.fontface.load();
+            if (!document.fonts.has(font.fontface)) {
+                await document.fonts.add(font.fontface)
+            }
+            return font.name;
+        }
+    }
+
     async render({font, fontSize, text, color, width, height, textAlign, fontStyle}, canvas, ctx) {
         canvas.width = width;
         canvas.height = height;
-        ctx.font = `${fontStyle} ${fontSize}px ${font}`;
+
+        ctx.font = `${fontStyle} ${fontSize}px "${(await this.loadFont(font)) || ''}"`;
         ctx.fillStyle = color;
         ctx.textAlign = textAlign;
         const x = textAlign === 'center' ? canvas.width /2 :
