@@ -61,27 +61,14 @@ export default class Resize extends Canvas2d {
 
     /**
      *
-     * @param {{name: string, url: string, fontface: FontFace}} font
+     * @param {{name: string, url: string, fontface: FontFace, type: 'font'}} font
      */
     async loadFont(font) {
         if (typeof font === 'string') {
-            return font
+            return font;
         } else if (!font) {
             return;
-        }
-
-        if (font.name && !font.url && !font.fontface) {
-            return name;
-        }
-        if (font.name && font.url && isEmpty(font.fontface)) {
-            font.fontface = new FontFace(font.name, font.url);
-        }
-
-        if (font.fontface) {
-            await font.fontface.load();
-            if (!document.fonts.has(font.fontface)) {
-                await document.fonts.add(font.fontface)
-            }
+        } else {
             return font.name;
         }
     }
@@ -91,6 +78,7 @@ export default class Resize extends Canvas2d {
         canvas.height = height;
 
         ctx.font = `${fontStyle} ${fontSize}px "${(await this.loadFont(font)) || ''}"`;
+        // ctx.font = `${fontStyle} ${fontSize}px "Arial"`;
         ctx.fillStyle = color;
         ctx.textAlign = textAlign;
         const x = textAlign === 'center' ? canvas.width /2 :

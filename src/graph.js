@@ -18,17 +18,19 @@ export default class Graph {
         }));
     }
 
-    static deserialize(nodes) {
+    static async deserialize(nodes) {
         const graph = new Graph();
-        graph.nodes = createNodes(nodes);
+        graph.nodes = await createNodes(nodes);
         for (let {node} of graph.nodes) {
           node.subject.on('running', (isRunning) => {
             graph.__nodesActive += isRunning ? 1 : -1;
             clearTimeout(graph.__nodesActiveDebounce);
             graph.__nodesActiveDebounce = setTimeout(() => {
               if (graph.__nodesActive > 0) {
+                console.log('running');
                 graph.subject.next('running');
               } else {
+                console.log('stopped');
                 graph.subject.next('stopped');
               }
             }, 16);
@@ -65,31 +67,31 @@ export default class Graph {
 
 
 
-export const createNode = ({name, options, id}) => {
+export const createNode = async ({name, options, id}) => {
     try {
         const node = new nodes[name](options);
-        node.deserialize({id, options});
+        await node.deserialize({id, options});
         return node;
     } catch (err) {
         console.error('Failed to create node', name, err)
     }
   }
 
-  export const createNodes = (nodes) => {
-    nodes = nodes.map(({node, x, y}) => {
-      const nodeInstance = createNode(node);
+  export const createNodes = async (nodes) => {
+    nodes = (await Promise.all(nodes.map(async ({node, x, y}) => {
+      const nodeInstance = await createNode(node);
       return ({
         node: nodeInstance,
         x, y,
-        connect(outputs) {
+        async connect(outputs) {
           try {
-            nodeInstance.reconnect(node, outputs);
+            await nodeInstance.reconnect(node, outputs);
           } catch(err) {
             console.error('Can\'t recoonect', nodeInstance, err);
           }
         }
       });
-    }).filter(({node}) => node);
+    }))).filter(({node}) => node);
 
     const outputsById = nodes
       .map(({node}) => Object.values(node.out.__values))
@@ -99,8 +101,8 @@ export const createNode = ({name, options, id}) => {
         return acc;
       }, {});
 
-    return nodes.map(({node, x, y, connect}) => {
-      connect(outputsById);
+    return await Promise.all(nodes.map(async ({node, x, y, connect}) => {
+      await connect(outputsById);
       return {node,x,y};
-    })
+    }))
   }

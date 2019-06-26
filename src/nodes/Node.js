@@ -20,11 +20,9 @@ export default class Node {
 
     __update(changes) {
         if (!this.__scheduledUpdate && !this._stopped) {
+            this._running = true;
             this.__scheduledUpdate = true;
             this.__currentUpdate = this.__currentUpdate
-                .then(() => {
-                    this._running = true;
-                })
                 .then(async () => {
                     const startTag =`graphfx-update-start:${this.uid}`;
                     const endTag = `graphfx-update-end:${this.uid}`
@@ -35,10 +33,10 @@ export default class Node {
                     performance.measure(`GraphFX<${this.name}>`, startTag, endTag)
                 })
                 .then(() => {
-                    this._running = false;
+                    this._running = this.__scheduledUpdate;
                 })
                 .catch((err) => {
-                    this._running = false;
+                    this._running = this.__scheduledUpdate;
                     throw err;
                 });
         }
@@ -84,11 +82,11 @@ export default class Node {
         }
     }
 
-    deserialize({id, options}) {
+    async deserialize({id, options}) {
         this.id = id || uuidv4();
     }
 
-    reconnect({options}, outputs) {
+    async reconnect({options}, outputs) {
         for (let name of Object.keys(options.in)) {
             const {output} = options.in[name];
             if (output) {
@@ -96,10 +94,10 @@ export default class Node {
             }
         }
         for (let name of Object.keys(options.out)) {
-            this.out[name].deserialize(options.out[name]);
+            await this.out[name].deserialize(options.out[name]);
         }
         for (let name of Object.keys(options.in)) {
-            this.in[name].deserialize(options.in[name]);
+            await this.in[name].deserialize(options.in[name]);
         }
     }
 

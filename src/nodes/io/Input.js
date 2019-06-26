@@ -51,8 +51,8 @@ export default class Input extends AbstractIO {
         }
     }
 
-    deserialize({value, label}) {
-        const deserializedValue = deserialize(value);
+    async deserialize({value, label}) {
+        const deserializedValue = await deserialize(value);
         if (deserializedValue) {
             this.value = deserializedValue;
         }
