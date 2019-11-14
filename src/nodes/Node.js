@@ -110,5 +110,9 @@ export default class Node {
                 }
             })
     }
+
+    toString() {
+        return `${this.name}<${this.id}>`;
+    }
 };
 

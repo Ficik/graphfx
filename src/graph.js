@@ -20,22 +20,26 @@ export default class Graph {
 
     static async deserialize(nodes) {
         const graph = new Graph();
-        graph.nodes = await createNodes(nodes);
-        for (let {node} of graph.nodes) {
+        const isRunningSet = new WeakSet();
+        graph.nodes = await createUnconnectedNodes(nodes);
+        for (const {node} of graph.nodes) {
           node.subject.on('running', (isRunning) => {
-            graph.__nodesActive += isRunning ? 1 : -1;
-            clearTimeout(graph.__nodesActiveDebounce);
-            graph.__nodesActiveDebounce = setTimeout(() => {
-              if (graph.__nodesActive > 0) {
-                console.log('running');
-                graph.subject.next('running');
-              } else {
-                console.log('stopped');
-                graph.subject.next('stopped');
-              }
-            }, 16);
+            if (!isRunning && isRunningSet.has(node)) {
+              isRunningSet.delete(node);
+              graph.__nodesActive -= 1;
+            } else if (isRunning && !isRunningSet.has(node)) {
+              isRunningSet.add(node);
+              graph.__nodesActive += 1;
+            }
+            if (graph.__nodesActive > 0) {
+              graph.subject.next('running');
+            } else {
+              console.info('[Graphfx] graph stopped');
+              graph.subject.next('stopped');
+            }
           });
         }
+        graph.nodes = await reconnectNodes(graph.nodes);
         return graph;
     }
 
@@ -77,32 +81,39 @@ export const createNode = async ({name, options, id}) => {
     }
   }
 
-  export const createNodes = async (nodes) => {
-    nodes = (await Promise.all(nodes.map(async ({node, x, y}) => {
-      const nodeInstance = await createNode(node);
-      return ({
-        node: nodeInstance,
-        x, y,
-        async connect(outputs) {
-          try {
-            await nodeInstance.reconnect(node, outputs);
-          } catch(err) {
-            console.error('Can\'t recoonect', nodeInstance, err);
-          }
+export const createUnconnectedNodes = async (nodes) => {
+  return (await Promise.all(nodes.map(async ({node, x, y}) => {
+    const nodeInstance = await createNode(node);
+    return ({
+      node: nodeInstance,
+      x, y,
+      async connect(outputs) {
+        try {
+          await nodeInstance.reconnect(node, outputs);
+        } catch(err) {
+          console.error('Can\'t recoonect', nodeInstance, err);
         }
-      });
-    }))).filter(({node}) => node);
+      }
+    });
+  }))).filter(({node}) => node);
+}
 
-    const outputsById = nodes
-      .map(({node}) => Object.values(node.out.__values))
-      .reduce((acc, nxt) => acc.concat(nxt), [])
-      .reduce((acc, nxt) => {
-        acc[nxt.id] = nxt;
-        return acc;
-      }, {});
+export const reconnectNodes = async (nodes) => {
+  const outputsById = nodes
+    .map(({node}) => Object.values(node.out.__values))
+    .reduce((acc, nxt) => acc.concat(nxt), [])
+    .reduce((acc, nxt) => {
+      acc[nxt.id] = nxt;
+      return acc;
+    }, {});
 
-    return await Promise.all(nodes.map(async ({node, x, y, connect}) => {
-      await connect(outputsById);
-      return {node,x,y};
-    }))
-  }
+  return await Promise.all(nodes.map(async ({node, x, y, connect}) => {
+    await connect(outputsById);
+    return {node,x,y};
+  }))
+}
+
+export const createNodes = async (nodes) => {
+  nodes = await createUnconnectedNodes(nodes);
+  return reconnectNodes(nodes);
+}
