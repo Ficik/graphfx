@@ -4,6 +4,7 @@ export {default as Resize} from './Canvas2d/Resize';
 export {default as Compose} from './Canvas2d/Compose';
 export {default as Fill} from './Canvas2d/Fill';
 export {default as Flip} from './Canvas2d/Flip';
+export {default as EmptySpace} from './Canvas2d/EmptySpace';
 // export {default as ImageIdentity} from './Canvas2d/ImageIdentity';
 export {default as Text} from './Canvas2d/Text';
  // WebGL
