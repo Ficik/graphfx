@@ -16,14 +16,20 @@
   "author": "standa.fifik@gmail.com",
   "license": "MIT",
   "devDependencies": {
-    "@babel/core": "^7.2.2",
-    "@babel/preset-env": "^7.2.3",
-    "@types/jest": "^23.3.10",
-    "babel-jest": "^23.6.0",
+    "@babel/core": "^7.7.5",
+    "@babel/preset-env": "^7.7.5",
+    "@babel/preset-typescript": "^7.7.4",
+    "@types/jest": "^24.0.0",
+    "babel-jest": "^24.6.0",
     "babel-polyfill": "^6.26.0",
-    "jest": "^23.6.0"
+    "jest": "^24.9.0"
   },
   "dependencies": {
-    "uuid": "^3.3.2"
+    "uuid": "^3.3.3"
+  },
+  "jest": {
+    "setupFiles": [
+      "<rootDir>/.jest.setup.js"
+    ]
   }
 }
