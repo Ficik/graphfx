@@ -1,7 +1,15 @@
 import AbstractIO from './AbstractIO';
+import Output from './Output';
+import {
+    Variable,
+    VariableValueType,
+} from './AbstractIOSet';
 import {serialize, deserialize} from './serializer';
 
-export default class Input extends AbstractIO {
+export default class Input<V extends Variable> extends AbstractIO<V> {
+
+    __output: Output<any>
+    __onchangelistener: Function
 
     constructor(name, definition, owner) {
         super(name, definition, owner);
@@ -13,11 +21,11 @@ export default class Input extends AbstractIO {
         }
     }
 
-    get value() {
+    get value(): VariableValueType<V> {
         return this.__getValue();
     }
 
-    set value(value) {
+    set value(value: VariableValueType<V>) {
         this.__setValue(value);
         this.__owner.update(this.name);
         this.__notifyListeners();
@@ -27,7 +35,7 @@ export default class Input extends AbstractIO {
         return this.__output;
     }
 
-    connect(output) {
+    connect(output: Output<any>) {
         if (output && output.type === this.type) {
             this.disconnect();
             this.__output = output
@@ -36,7 +44,7 @@ export default class Input extends AbstractIO {
         }
     }
 
-    disconnect(output) {
+    disconnect(output?) {
         if (this.__output) {
             this.__output.offchange(this.__onchangelistener);
             this.__output = null;

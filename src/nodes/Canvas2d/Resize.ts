@@ -1,22 +1,33 @@
 import Canvas2d from './Canvas2d';
 import {waitForMedia} from '../../utils';
 import {createCanvas, mediaSize, paintToCanvas} from '../canvas';
+import {
+    ImageVar,
+    StringVar,
+    NumberVar
+} from '../io/AbstractIOSet';
 
-export default class Resize extends Canvas2d {
+
+
+const inputs = {
+    width: {
+        type: 'Number',
+        default: 100,
+        min: 1,
+    } as NumberVar,
+    height: {
+        type: 'Number',
+        default: 100,
+        min: 1,
+    } as NumberVar,
+};
+
+const outputs = {};
+
+export default class Resize extends Canvas2d<typeof inputs, typeof outputs> {
 
     constructor() {
-        super('Resize', {
-            width: {
-                type: 'Number',
-                default: 100,
-                min: 1,
-            },
-            height: {
-                type: 'Number',
-                default: 100,
-                min: 1,
-            },
-        }, {});
+        super('Resize', inputs, outputs, {});
     }
 
     /**

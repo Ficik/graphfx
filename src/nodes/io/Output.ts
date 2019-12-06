@@ -1,6 +1,9 @@
 import AbstractIO from './AbstractIO';
+import {
+    Variable,
+} from './AbstractIOSet';
 
-export default class Output extends AbstractIO {
+export default class Output<V extends Variable> extends AbstractIO<V> {
 
     constructor(name, definition, owner) {
         super(name, definition, owner);

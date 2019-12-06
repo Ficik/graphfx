@@ -1,8 +1,9 @@
+import Node from '../Node';
 import Output from './Output';
-import AbstractIOSet from './AbstractIOSet';
+import {default as AbstractIOSet, Variables} from './AbstractIOSet';
 
-export default class Outputs extends AbstractIOSet {
-    constructor(variables, owner) {
+export default class Outputs<V extends Variables> extends AbstractIOSet<V> {
+    constructor(variables: V, owner: Node<any, any>) {
         super(variables, owner);
     }
 

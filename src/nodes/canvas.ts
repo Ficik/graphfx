@@ -1,10 +1,4 @@
-/**
- *
- * @param {Number} width
- * @param {Number} height
- * @returns {HTMLCanvasElement}
- */
-export const createCanvas = (width, height) => {
+export const createCanvas = (width: number, height: number):HTMLCanvasElement => {
     const canvas = document.createElement('canvas');
     canvas.width = width;
     canvas.height = height;
@@ -12,19 +6,11 @@ export const createCanvas = (width, height) => {
     return canvas;
 }
 
-/**
- * @typedef {HTMLImageElement|HTMLVideoElement} PaintableElement
- * @typedef {{top: Number, left: Number, width: Number, height: Number}} Bounds
- * @typedef {function(HTMLCanvasElement, PaintableElement, Bounds): HTMLCanvasElement} PaintToCanvasFunction
- */
+type Canvas = HTMLCanvasElement | OffscreenCanvas;
 
+export type Bounds = {top: number, left: number, width: number, height: number};
 
-/**
- *
- * @param {PaintableElement|{width: Number, height: Number}} media
- * @returns {{width: Number, height: Number}}
- */
-export const mediaSize = (media) =>
+export const mediaSize = (media: HTMLImageElement|HTMLVideoElement|{width: number, height: number}) =>
   (media === null) ? {width: null, height: null} :
   (media instanceof HTMLVideoElement) ? {width: media.videoWidth, height: media.videoHeight} :
   (media instanceof HTMLImageElement) ? {width: media.naturalWidth, height: media.naturalHeight} :
@@ -35,7 +21,11 @@ export const mediaSize = (media) =>
  * @param {PaintableElement} media
  * @param {Bounds} param2
  */
-export const paintToCanvas = (canvas, media, {top, left, width, height}) => {
+export const paintToCanvas = (
+  canvas: Canvas,
+  media: CanvasImageSource,
+  {top, left, width, height}: Bounds
+) => {
   const ctx = canvas.getContext('2d');
   if (canvas.width > 0 && canvas.height > 0 && width > 0 && height > 0) {
       ctx.drawImage(media, left, top, width, height);

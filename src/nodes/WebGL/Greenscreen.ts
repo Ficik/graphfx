@@ -1,4 +1,8 @@
 import WebGL from './WebGl';
+import {
+    NumberVar,
+    ColorVar
+} from '../io/AbstractIOSet';
 
 const hexColorTOvec3 = (val) => {
     const match = val.match(/#?([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})/);
@@ -9,35 +13,37 @@ const hexColorTOvec3 = (val) => {
     }
 };
 
-export default class GreenScreen extends WebGL {
+const inputs = {
+    balance: {
+        type: 'Number',
+        default: 0.5,
+        step: 0.1,
+    } as NumberVar,
+    screen: {
+        type: 'Color',
+        default: '#2CD6A4',
+    } as ColorVar,
+    screenWeight: {
+        type: 'Number',
+        default: 1,
+        min: 0,
+        max: 1,
+        step: 0.1,
+    } as NumberVar,
+    clipBlack: {
+        type: 'Number',
+        default: 0,
+    } as NumberVar,
+    clipWhite: {
+        type: 'Number',
+        default: 1,
+    } as NumberVar,
+};
+
+export default class GreenScreen extends WebGL<typeof inputs> {
 
     constructor() {
-        super('GreenScreen', {
-            balance: {
-                type: 'Number',
-                default: 0.5,
-                step: 0.1,
-            },
-            screen: {
-                type: 'Color',
-                default: '#2CD6A4',
-            },
-            screenWeight: {
-                type: 'Number',
-                default: 1,
-                min: 0,
-                max: 1,
-                step: 0.1,
-            },
-            clipBlack: {
-                type: 'Number',
-                default: 0,
-            },
-            clipWhite: {
-                type: 'Number',
-                default: 1,
-            },
-        })
+        super('GreenScreen', inputs)
     }
 
     get frag() {

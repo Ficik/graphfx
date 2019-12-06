@@ -1,19 +1,24 @@
 import WebGL from './WebGl';
+import {
+    NumberVar,
+} from '../io/AbstractIOSet';
+
+const inputs = {
+    brightness: {
+        type: 'Number',
+        default: 1,
+    } as NumberVar,
+    contrast: {
+        type: 'Number',
+        default: 1,
+    } as NumberVar,
+};
 
 
-export default class BrightnessContrast extends WebGL {
+export default class BrightnessContrast extends WebGL<typeof inputs> {
 
     constructor() {
-        super('BrightnessContrast', {
-            brightness: {
-                type: 'Number',
-                default: 1,
-            },
-            contrast: {
-                type: 'Number',
-                default: 1,
-            },
-        })
+        super('BrightnessContrast', inputs)
     }
 
     get frag() {

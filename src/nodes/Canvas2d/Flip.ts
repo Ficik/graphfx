@@ -1,19 +1,26 @@
 import Canvas2d from './Canvas2d';
 import {createCanvas, mediaSize, paintToCanvas} from '../canvas';
+import {
+    BooleanVar
+  } from '../io/AbstractIOSet';
 
-export default class Flip extends Canvas2d {
+const inputs = {
+    horizontal: {
+        type: 'Boolean',
+        default: false,
+    } as BooleanVar,
+    vertical: {
+        type: 'Boolean',
+        default: false,
+    } as BooleanVar,
+}
+
+const outputs = {};
+
+export default class Flip extends Canvas2d<typeof inputs, typeof outputs> {
 
     constructor() {
-        super('Flip', {
-            horizontal: {
-                type: 'Boolean',
-                default: false,
-            },
-            vertical: {
-                type: 'Boolean',
-                default: false,
-            },
-        }, {});
+        super('Flip', inputs, outputs, {});
         this._update();
     }
 

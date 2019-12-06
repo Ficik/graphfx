@@ -1,9 +1,10 @@
 import Input from './Input';
-import AbstractIOSet from './AbstractIOSet';
+import Node from '../Node';
+import {default as AbstractIOSet, Variables} from './AbstractIOSet';
 
-export default class Inputs extends AbstractIOSet {
+export default class Inputs<V extends Variables> extends AbstractIOSet<V> {
 
-    constructor(variables, owner) {
+    constructor(variables: V, owner: Node<any, any>) {
         super(variables, owner);
     }
 

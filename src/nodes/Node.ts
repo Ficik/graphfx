@@ -1,15 +1,27 @@
-import {Inputs, Outputs} from './io';
+import {Inputs, Outputs} from './io/index';
 import uuidv4 from 'uuid/v4';
+import {Variables, InputProperties, OutputProperties} from './io/AbstractIOSet';
 import {MultiSubject} from '../helpers/listener';
 
-export default class Node {
+export default class Node<I extends Variables, O extends Variables> {
 
-    constructor(name, inputDefinition, outputDefiniton, options) {
+    name: string
+    uid: string
+    id: string
+    __in: Inputs<I> & InputProperties<I>
+    __out: Outputs<O> & OutputProperties<O>
+    __scheduledUpdate: boolean
+    __currentUpdate: Promise<any>
+    __running: boolean
+    _stopped: boolean
+    subject: MultiSubject
+
+    constructor(name: string, inputDefinition: I, outputDefiniton: O, options) {
         this.name = name;
         this.uid = uuidv4();
         this.id = uuidv4();
-        this.__in = new Inputs(inputDefinition, this);
-        this.__out = new Outputs(outputDefiniton, this);
+        this.__in = new Inputs(inputDefinition, this) as Inputs<I> & InputProperties<I>;
+        this.__out = new Outputs(outputDefiniton, this) as Outputs<O> & OutputProperties<O>;
         this.__in.update = (name) => this.__update([name]);
         this.__scheduledUpdate = false;
         this.__currentUpdate = Promise.resolve();

@@ -13,7 +13,7 @@ export {default as HSV} from './WebGL/HSV';
 export {default as Sepia} from './WebGL/Sepia';
 export {default as GreenScreen} from './WebGL/Greenscreen';
 export {default as Channels} from './WebGL/Channels';
-export {default as Blur} from './WebGL/Blur';
+// export {default as Blur} from './WebGL/Blur';
 // Math
 export {default as Numbers} from './Math/Numbers';
 export {default as NumberBinaryOperation} from './Math/NumberBinaryOperation';

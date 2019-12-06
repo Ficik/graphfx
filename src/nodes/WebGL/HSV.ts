@@ -1,23 +1,28 @@
 import WebGL from './WebGl';
+import {
+    NumberVar
+} from '../io/AbstractIOSet';
+
+const inputs = {
+    hue: {
+        type: 'Number',
+        default: 0,
+    } as NumberVar,
+    saturation: {
+        type: 'Number',
+        default: 1,
+    } as NumberVar,
+    value: {
+        type: 'Number',
+        default: 1,
+    } as NumberVar
+};
 
 
-export default class HSV extends WebGL {
+export default class HSV extends WebGL<typeof inputs> {
 
     constructor() {
-        super('HSV', {
-            hue: {
-                type: 'Number',
-                default: 0,
-            },
-            saturation: {
-                type: 'Number',
-                default: 1,
-            },
-            value: {
-                type: 'Number',
-                default: 1,
-            }
-        })
+        super('HSV', inputs)
     }
 
     get frag() {

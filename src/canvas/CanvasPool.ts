@@ -1,5 +1,13 @@
+type PoolCanvas<T extends (OffscreenCanvas | HTMLCanvasElement)> = T & {
+    acquire(): void
+    release(): void
+}
 
-class CanvasPool {
+class CanvasPool<T extends (OffscreenCanvas | HTMLCanvasElement)> {
+
+    __ctx: any
+    __pool: PoolCanvas<T>[]
+    __pointerCounter: WeakMap<PoolCanvas<T>, number>
 
     constructor(ctx) {
         this.__ctx = ctx;
@@ -9,26 +17,28 @@ class CanvasPool {
 
     __createNewCanvas() {
         const canvas = (this.__ctx !== 'webgl') ? new OffscreenCanvas(1,1) : document.createElement('canvas');
+        // @ts-ignore
         canvas.acquire = this.acquireCanvas.bind(this, canvas);
+        // @ts-ignore
         canvas.release = this.releaseCanvas.bind(this, canvas);
         canvas.getContext(this.__ctx);
-        this.__pool.push(canvas);
-        this.__pointerCounter.set(canvas, 0);
+        this.__pool.push(<PoolCanvas<T>>canvas);
+        this.__pointerCounter.set(<PoolCanvas<T>>canvas, 0);
     }
 
-    createCanvas() {
+    createCanvas():PoolCanvas<T> {
         if (this.__pool.length === 0) {
             this.__createNewCanvas();
         }
         return this.__pool.pop();
     }
 
-    acquireCanvas(canvas) {
+    acquireCanvas(canvas: PoolCanvas<T>) {
         const inUse = this.__pointerCounter.get(canvas) + 1;
         this.__pointerCounter.set(canvas, inUse);
     }
 
-    releaseCanvas(canvas) {
+    releaseCanvas(canvas: PoolCanvas<T>) {
         const inUse = this.__pointerCounter.get(canvas) - 1;
         this.__pointerCounter.set(canvas, inUse);
         if (inUse === 0) {
@@ -38,5 +48,5 @@ class CanvasPool {
 
 }
 
-export const canvasPool2D = new CanvasPool('2d');
-export const canvasPoolWebGL = new CanvasPool('webgl');
+export const canvasPool2D = new CanvasPool<OffscreenCanvas>('2d');
+export const canvasPoolWebGL = new CanvasPool<HTMLCanvasElement>('webgl');

@@ -1,26 +1,32 @@
 import Node from './Node';
+import {ImageVar, BooleanVar, NumberVar} from './io/AbstractIOSet';
 
-export default class Disable extends Node {
+const inputs = {
+  image: {
+    type: 'Image',
+  } as ImageVar,
+  disabled: {
+    type: 'Boolean',
+    default: false,
+  } as BooleanVar,
+};
+
+const outputs = {
+  image: {
+    type: 'Image',
+  } as ImageVar,
+  width: {
+    type: 'Number',
+  } as NumberVar,
+  height: {
+    type: 'Number',
+  } as NumberVar,
+};
+
+
+export default class Disable extends Node<typeof inputs, typeof outputs> {
     constructor() {
-        super('Disable', {
-          image: {
-            type: 'Image',
-          },
-          disabled: {
-            type: 'Boolean',
-            default: false,
-          },
-        }, {
-          image: {
-            type: 'Image',
-          },
-          width: {
-            type: 'Number',
-          },
-          height: {
-            type: 'Number',
-          },
-        }, {});
+        super('Disable', inputs, outputs, {});
     }
 
     async _update() {

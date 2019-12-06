@@ -1,14 +1,34 @@
-import * as nodes from './nodes';
+import * as nodes from './nodes/index';
+import Node from './nodes/Node'
 import {MultiSubject} from './helpers/listener';
 
+interface GraphNode {
+  node: Node<any, any>,
+  x?: number,
+  y?: number
+}
 
 export default class Graph {
 
-    constructor() {
-        this.nodes = [];
+    nodes: GraphNode[]
+    __nodesActive: number
+    __isRunningSet: WeakSet<any>
+    subject: MultiSubject
+
+    constructor(nodes=[]) {
+        this.__isRunningSet = new WeakSet();
+        this.nodes = nodes;
         this.__nodesActive = 0;
-        this.__nodesActiveDebounce = null;
         this.subject = new MultiSubject(['running', 'stopped']);
+        this.__setupRunningListeners();
+    }
+
+    get isRunning() {
+      return this.__nodesActive > 0;
+    }
+
+    get isStopped() {
+      return this.__nodesActive === 0;
     }
 
     serialize() {
@@ -18,28 +38,38 @@ export default class Graph {
         }));
     }
 
-    static async deserialize(nodes) {
-        const graph = new Graph();
-        const isRunningSet = new WeakSet();
-        graph.nodes = await createUnconnectedNodes(nodes);
-        for (const {node} of graph.nodes) {
-          node.subject.on('running', (isRunning) => {
-            if (!isRunning && isRunningSet.has(node)) {
-              isRunningSet.delete(node);
-              graph.__nodesActive -= 1;
-            } else if (isRunning && !isRunningSet.has(node)) {
-              isRunningSet.add(node);
-              graph.__nodesActive += 1;
-            }
-            if (graph.__nodesActive > 0) {
-              graph.subject.next('running');
-            } else {
-              console.info('[Graphfx] graph stopped');
-              graph.subject.next('stopped');
-            }
-          });
+    addNode(node) {
+      this.nodes.push({node});
+      this.__setupNodeRunningListener(node);
+    }
+
+    __setupNodeRunningListener(node) {
+      node.subject.on('running', (isRunning) => {
+        if (!isRunning && this.__isRunningSet.has(node)) {
+          this.__isRunningSet.delete(node);
+          this.__nodesActive -= 1;
+        } else if (isRunning && !this.__isRunningSet.has(node)) {
+          this.__isRunningSet.add(node);
+          this.__nodesActive += 1;
         }
-        graph.nodes = await reconnectNodes(graph.nodes);
+        if (this.__nodesActive > 0) {
+          this.subject.next('running');
+        } else {
+          console.info('[Graphfx] graph stopped');
+          this.subject.next('stopped');
+        }
+      });
+    }
+
+    __setupRunningListeners() {
+      for (const {node} of this.nodes) {
+        this.__setupNodeRunningListener(node);
+      }
+    }
+
+    static async deserialize(nodes) {
+        const graph = new Graph(await createUnconnectedNodes(nodes));
+        await reconnectNodes(graph.nodes);
         return graph;
     }
 
@@ -71,17 +101,20 @@ export default class Graph {
 
 
 
-export const createNode = async ({name, options, id}) => {
+export async function createNode<T extends keyof typeof nodes>(
+  {name, options, id}:{name: T, options: any, id: string}):Promise<typeof nodes[T]> {
     try {
         const node = new nodes[name](options);
         await node.deserialize({id, options});
+        // @ts-ignore
         return node;
     } catch (err) {
         console.error('Failed to create node', name, err)
     }
   }
 
-export const createUnconnectedNodes = async (nodes) => {
+export const createUnconnectedNodes = async (nodes):Promise<GraphNode[]> => {
+  // @ts-ignore
   return (await Promise.all(nodes.map(async ({node, x, y}) => {
     const nodeInstance = await createNode(node);
     return ({
@@ -113,7 +146,8 @@ export const reconnectNodes = async (nodes) => {
   }))
 }
 
-export const createNodes = async (nodes) => {
-  nodes = await createUnconnectedNodes(nodes);
-  return reconnectNodes(nodes);
+export const createNodes = async (nodes):Promise<GraphNode[]> => {
+  const unconnectedNodes = await createUnconnectedNodes(nodes);
+  // @ts-ignore
+  return reconnectNodes(unconnectedNodes);
 }

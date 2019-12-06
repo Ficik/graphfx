@@ -1,3 +1,8 @@
+import {
+    default as AbstractIOSet,
+    Variable,
+    VariableValueType,
+} from './AbstractIOSet';
 import {isNil} from '../../utils';
 
 export const defaultConstrainSatisfied = (value) => {
@@ -32,9 +37,16 @@ export const valueConstrainsSatisfied = (definition, value) => {
     )
 };
 
-export default class AbstractIO {
+export default class AbstractIO<V extends Variable> {
 
-    constructor(name, definition, owner) {
+    __name: string
+    __owner: AbstractIOSet<any>
+    __definition: V
+    __value: VariableValueType<V>
+    label: string
+    __listeners: Function[]
+
+    constructor(name, definition: V, owner: AbstractIOSet<any>) {
         this.__name = name;
         this.__owner = owner
         this.__definition = definition;
@@ -64,18 +76,18 @@ export default class AbstractIO {
     }
 
     get value() {
-        return this.__getValue;
+        return this.__getValue();
     }
 
     set value(val) {
         this.__setValue(val);
     }
 
-    __getValue() {
-        return (valueConstrainsSatisfied(this.__definition, this.__value)) ? this.__value : this.__defaultValue;
+    __getValue(): VariableValueType<V> {
+        return (valueConstrainsSatisfied(this.__definition, this.__value)) ? this.__value : this.__defaultValue as VariableValueType<V>;
     }
 
-    __setValue(value) {
+    __setValue(value: VariableValueType<V>) {
         if (valueConstrainsSatisfied(this.__definition, value)) {
             this.__value = value;
         }

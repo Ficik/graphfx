@@ -1,25 +1,43 @@
 import Node from '../Node';
 import {createCanvas, mediaSize, paintToCanvas} from '../canvas';
+import {merge} from '../../utils';
 import {canvasPool2D} from '../../canvas/CanvasPool';
+import {
+    Variables,
+    ImageVar,
+    NumberVar
+} from '../io/AbstractIOSet';
 
-export default class WebGL extends Node {
+const inputs = {
+    image: {
+        type: 'Image',
+    } as ImageVar,
+};
 
-    constructor(name, inputs={}) {
-        super(name, Object.assign({
-            image: {
-                type: 'Image',
-            },
-        }, inputs), {
-            image: {
-                type: 'Image',
-            },
-            width: {
-                type: 'Number',
-            },
-            height: {
-                type: 'Number',
-            }
-        });
+const outputs = {
+    image: {
+        type: 'Image',
+    } as ImageVar,
+    width: {
+        type: 'Number',
+    } as NumberVar,
+    height: {
+        type: 'Number',
+    } as NumberVar
+}
+
+export default class WebGL<I extends Variables> extends Node<I & (typeof inputs), (typeof outputs)> {
+
+    canvas: HTMLCanvasElement
+    program: WebGLProgram
+
+    constructor(name, inputDefinition: I) {
+        super(
+            name,
+            merge(inputs, inputDefinition),
+            outputs,
+            {}
+        )
     }
 
     destroy() {
@@ -75,7 +93,7 @@ export default class WebGL extends Node {
         `
     }
 
-    fragShader(gl) {
+    fragShader(gl: WebGLRenderingContext) {
         var shader = gl.createShader(gl.FRAGMENT_SHADER);
         gl.shaderSource(shader, this.frag);
         gl.compileShader(shader);
@@ -87,7 +105,7 @@ export default class WebGL extends Node {
         return shader;
     }
 
-    vertShader(gl) {
+    vertShader(gl: WebGLRenderingContext) {
         var shader = gl.createShader(gl.VERTEX_SHADER);
         gl.shaderSource(shader, this.vert);
         gl.compileShader(shader);
@@ -99,11 +117,7 @@ export default class WebGL extends Node {
         return shader;
     }
 
-    /**
-     *
-     * @param {WebGLRenderingContext} gl
-     */
-    compileProgram(gl) {
+    compileProgram(gl: WebGLRenderingContext) {
         const program = gl.createProgram();
 
         gl.attachShader(program, this.vertShader(gl));
@@ -122,7 +136,7 @@ export default class WebGL extends Node {
         return this.in.image.value;
     }
 
-    createTexture(gl) {
+    createTexture(gl: WebGLRenderingContext) {
         const texture = gl.createTexture();
         gl.bindTexture(gl.TEXTURE_2D, texture);
 
@@ -136,7 +150,7 @@ export default class WebGL extends Node {
         return texture;
     }
 
-    _createFrameBuffer(gl, {width, height}) {
+    _createFrameBuffer(gl: WebGLRenderingContext, {width, height}) {
         const texture = this.createTexture(gl);
 
         const frameBuffer = gl.createFramebuffer();
@@ -152,7 +166,7 @@ export default class WebGL extends Node {
 
     _passes() {
         return [
-            (gl, program, image) => {
+            (gl: WebGLRenderingContext, program: WebGLProgram, image) => {
                 this._setParams(gl, program);
             },
         ]

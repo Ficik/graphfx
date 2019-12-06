@@ -1,39 +1,43 @@
 import WebGL from './WebGl';
+import {
+    NumberVar
+} from '../io/AbstractIOSet';
 
+const inputs = {
+    red: {
+        type: 'Number',
+        default: 1,
+        min: 0,
+        max: 1,
+        step: 0.1,
+    } as NumberVar,
+    green: {
+        type: 'Number',
+        default: 1,
+        min: 0,
+        max: 1,
+        step: 0.1,
+    } as NumberVar,
+    blue: {
+        type: 'Number',
+        default: 1,
+        min: 0,
+        max: 1,
+        step: 0.1,
+    } as NumberVar,
+    amount: {
+        type: 'Number',
+        default: 0,
+        min: 0,
+        max: 1,
+        step: 0.1,
+    } as NumberVar
+};
 
-export default class Channels extends WebGL {
+export default class Channels extends WebGL<typeof inputs> {
 
     constructor() {
-        super('Channels', {
-            red: {
-                type: 'Number',
-                default: 1,
-                min: 0,
-                max: 1,
-                step: 0.1,
-            },
-            green: {
-                type: 'Number',
-                default: 1,
-                min: 0,
-                max: 1,
-                step: 0.1,
-            },
-            blue: {
-                type: 'Number',
-                default: 1,
-                min: 0,
-                max: 1,
-                step: 0.1,
-            },
-            amount: {
-                type: 'Number',
-                default: 0,
-                min: 0,
-                max: 1,
-                step: 0.1,
-            }
-        })
+        super('Channels', inputs)
     }
 
     get frag() {

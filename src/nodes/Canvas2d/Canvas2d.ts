@@ -1,26 +1,38 @@
 import Node from '../Node';
-import {waitForMedia} from '../../utils';
+import {waitForMedia, merge} from '../../utils';
 import {canvasPool2D} from '../../canvas/CanvasPool';
+import {
+    Variables,
+    ImageVar,
+    BooleanVar,
+    NumberVar
+} from '../io/AbstractIOSet';
 
-export default class Canvas2d extends Node {
-    constructor(name, inputDefinition, outputDefiniton, options) {
+const inputs = {
+    image: {
+        type: 'Image',
+    } as ImageVar,
+};
+
+const outputs = {
+    image: {
+        type: 'Image',
+    } as ImageVar,
+    width: {
+        type: 'Number',
+    } as NumberVar,
+    height: {
+        type: 'Number',
+    } as NumberVar
+};
+
+
+
+export default class Canvas2d<I extends Variables, O extends Variables> extends Node<I & (typeof inputs), O & (typeof outputs)> {
+    constructor(name, inputDefinition: I, outputDefiniton: O, options) {
         super(name,
-            Object.assign({
-                image: {
-                    type: 'Image',
-                },
-            }, inputDefinition),
-            Object.assign({
-                image: {
-                    type: 'Image',
-                },
-                width: {
-                    type: 'Number',
-                },
-                height: {
-                    type: 'Number',
-                }
-            }, outputDefiniton),
+            merge(inputs, inputDefinition),
+            merge(outputs, outputDefiniton),
             options
         );
     }

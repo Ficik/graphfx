@@ -1,15 +1,19 @@
 import WebGL from './WebGl';
+import {
+    NumberVar
+} from '../io/AbstractIOSet';
 
+const inputs = {
+    amount: {
+        type: 'Number',
+        default: 0,
+    } as NumberVar,
+};
 
-export default class Sepia extends WebGL {
+export default class Sepia extends WebGL<typeof inputs> {
 
     constructor() {
-        super('Sepia', {
-            amount: {
-                type: 'Number',
-                default: 0,
-            },
-        })
+        super('Sepia', inputs)
     }
 
     get frag() {
