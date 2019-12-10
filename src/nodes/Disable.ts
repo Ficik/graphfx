@@ -26,7 +26,7 @@ const outputs = {
 
 export default class Disable extends Node<typeof inputs, typeof outputs> {
     constructor() {
-        super('Disable', inputs, outputs, {});
+        super('Disable', inputs, outputs);
     }
 
     async _update() {

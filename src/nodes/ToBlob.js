@@ -1,3 +1,4 @@
+// @ts-nocheck
 import Node from './Node';
 import {createCanvas} from './canvas';
 

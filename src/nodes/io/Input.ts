@@ -8,7 +8,7 @@ import {serialize, deserialize} from './serializer';
 
 export default class Input<V extends Variable> extends AbstractIO<V> {
 
-    __output: Output<any>
+    __output: Output<V>
     __onchangelistener: Function
 
     constructor(name, definition, owner) {
@@ -35,7 +35,7 @@ export default class Input<V extends Variable> extends AbstractIO<V> {
         return this.__output;
     }
 
-    connect(output: Output<any>) {
+    connect(output: Output<V>) {
         if (output && output.type === this.type) {
             this.disconnect();
             this.__output = output

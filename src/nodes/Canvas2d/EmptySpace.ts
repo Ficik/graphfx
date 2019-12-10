@@ -29,7 +29,7 @@ const outputs = {
 export default class EmptySpace extends Canvas2d<typeof inputs, typeof outputs> {
 
     constructor() {
-      super('EmptySpace', inputs, outputs, {});
+      super('EmptySpace', inputs, outputs);
       this._update();
     }
 

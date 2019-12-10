@@ -37,7 +37,7 @@ const outputs = {
 
 export default class Numbers extends Node<typeof inputs, typeof outputs> {
     constructor() {
-        super('Numbers', inputs, outputs, {});
+        super('Numbers', inputs, outputs);
     }
 
     async _update() {

@@ -36,7 +36,7 @@ const outputs = {
 
 export default class NumberBinaryOperation extends Node<typeof inputs, typeof outputs> {
     constructor() {
-        super('NumberBinaryOperation', inputs, outputs, {});
+        super('NumberBinaryOperation', inputs, outputs);
     }
 
     async _update() {

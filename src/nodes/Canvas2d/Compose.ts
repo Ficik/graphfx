@@ -1,4 +1,5 @@
 import Canvas2d from './Canvas2d';
+import {PoolCanvas} from '../../canvas/CanvasPool';
 import {createCanvas, mediaSize, paintToCanvas} from '../canvas';
 import {
     ImageVar,
@@ -89,7 +90,7 @@ const outputs = {
 export default class Compose extends Canvas2d<typeof inputs, typeof outputs> {
 
     constructor(options={}) {
-        super('Compose', inputs, outputs, options);
+        super('Compose', inputs, outputs);
     }
 
     get width() {
@@ -149,13 +150,13 @@ export default class Compose extends Canvas2d<typeof inputs, typeof outputs> {
         ctx.globalCompositeOperation = 'source-over';
 
         if (this.bg) {
-            paintToCanvas(canvas, this.bg.image, this.bg);
+            paintToCanvas(canvas, <PoolCanvas<any>>this.bg.image, this.bg);
         }
 
         ctx.globalCompositeOperation = mode;
 
         if (this.fg) {
-            paintToCanvas(canvas, this.fg.image, this.fg);
+            paintToCanvas(canvas, <PoolCanvas<any>>this.fg.image, this.fg);
         }
 
         return canvas;

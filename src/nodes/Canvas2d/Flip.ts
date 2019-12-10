@@ -20,7 +20,7 @@ const outputs = {};
 export default class Flip extends Canvas2d<typeof inputs, typeof outputs> {
 
     constructor() {
-        super('Flip', inputs, outputs, {});
+        super('Flip', inputs, outputs);
         this._update();
     }
 

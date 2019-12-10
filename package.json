@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "webpack-dev-server --quiet --progress --watch --mode development",
     "build": "webpack --mode production --quiet --progress",
+    "ts-check": "tsc --noEmit --project tsconfig.json",
     "test": "jest"
   },
   "keywords": [
@@ -22,9 +23,12 @@
     "@types/jest": "^24.0.0",
     "babel-jest": "^24.6.0",
     "babel-polyfill": "^6.26.0",
-    "jest": "^24.9.0"
+    "jest": "^24.9.0",
+    "typescript": "^3.7.3"
   },
   "dependencies": {
+    "@types/css-font-loading-module": "0.0.2",
+    "@types/uuid": "^3.4.6",
     "uuid": "^3.3.3"
   },
   "jest": {

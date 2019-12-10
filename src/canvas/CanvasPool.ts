@@ -1,4 +1,4 @@
-type PoolCanvas<T extends (OffscreenCanvas | HTMLCanvasElement)> = T & {
+export type PoolCanvas<T extends (OffscreenCanvas | HTMLCanvasElement)> = T & {
     acquire(): void
     release(): void
 }

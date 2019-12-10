@@ -36,7 +36,7 @@ const outputs = {
 
 export default class Font extends Node<typeof inputs, typeof outputs> {
     constructor() {
-        super('Font', inputs, outputs, {});
+        super('Font', inputs, outputs);
     }
 
     async _update() {

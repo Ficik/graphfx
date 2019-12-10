@@ -1,3 +1,4 @@
+// @ts-nocheck
 import Node from './Node';
 
 export default class Numbers extends Node {

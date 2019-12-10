@@ -5,13 +5,17 @@ import {
     Variables,
     ImageVar,
     BooleanVar,
-    NumberVar
+    NumberVar,
+    VariableValueType
 } from '../io/AbstractIOSet';
 
 const inputs = {
     image: {
         type: 'Image',
     } as ImageVar,
+    width: {
+        type: 'Number',
+    } as NumberVar,
 };
 
 const outputs = {
@@ -29,11 +33,10 @@ const outputs = {
 
 
 export default class Canvas2d<I extends Variables, O extends Variables> extends Node<I & (typeof inputs), O & (typeof outputs)> {
-    constructor(name, inputDefinition: I, outputDefiniton: O, options) {
+    constructor(name, inputDefinition: I, outputDefiniton: O) {
         super(name,
             merge(inputs, inputDefinition),
             merge(outputs, outputDefiniton),
-            options
         );
     }
 
@@ -42,7 +45,11 @@ export default class Canvas2d<I extends Variables, O extends Variables> extends 
     }
 
     async _update() {
-        const values = {};
+        type valuesType = {
+            [K in keyof I]: VariableValueType<I[K]['type']>;
+        }
+        const values:valuesType = <valuesType>{};
+
         for (let name of Object.keys(this.in.variables)) {
             values[name] = await waitForMedia(this.in[name].value);
         }

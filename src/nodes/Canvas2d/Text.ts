@@ -65,7 +65,7 @@ const outputs = {};
 export default class Resize extends Canvas2d<typeof inputs, typeof outputs>  {
 
     constructor() {
-        super('Text', inputs, outputs, {});
+        super('Text', inputs, outputs);
         this._update();
     }
 

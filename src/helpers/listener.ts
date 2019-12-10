@@ -1,16 +1,20 @@
-export class Subject {
+type Listener<V> = ((val: V) => void);
+
+export class Subject<V> {
+
+  __listeners: Listener<V>[]
 
   constructor() {
     this.__listeners = [];
   }
 
-  next(val) {
+  next(val:V) {
     for (let listener of this.__listeners) {
       listener(val);
     }
   }
 
-  once() {
+  once():Promise<V> {
     return new Promise((resolve) => {
       const done = (val) => {
         resolve(val);
@@ -20,11 +24,11 @@ export class Subject {
     })
   }
 
-  on(fn) {
+  on(fn:Listener<V>) {
     this.__listeners.push(fn);
   }
 
-  off(fn) {
+  off(fn:Listener<V>) {
     this.__listeners = this.__listeners.filter((listener) => listener !== fn);
   }
 
@@ -33,11 +37,12 @@ export class Subject {
   }
 }
 
-
-
 export class MultiSubject {
+  __subjects: {
+    [name: string]: Subject<any>
+  }
 
-  constructor(types) {
+  constructor(types: string[]) {
     this.__subjects = {};
     for (let type of types) {
       this.__subjects[type] = new Subject();

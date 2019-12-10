@@ -1,7 +1,7 @@
 import Node from '../Node';
 import {createCanvas, mediaSize, paintToCanvas} from '../canvas';
 import {merge} from '../../utils';
-import {canvasPool2D} from '../../canvas/CanvasPool';
+import {canvasPool2D, PoolCanvas} from '../../canvas/CanvasPool';
 import {
     Variables,
     ImageVar,
@@ -36,7 +36,6 @@ export default class WebGL<I extends Variables> extends Node<I & (typeof inputs)
             name,
             merge(inputs, inputDefinition),
             outputs,
-            {}
         )
     }
 
@@ -166,7 +165,11 @@ export default class WebGL<I extends Variables> extends Node<I & (typeof inputs)
 
     _passes() {
         return [
-            (gl: WebGLRenderingContext, program: WebGLProgram, image) => {
+            (
+                gl: WebGLRenderingContext,
+                program: WebGLProgram,
+                // image
+            ) => {
                 this._setParams(gl, program);
             },
         ]
@@ -190,7 +193,7 @@ export default class WebGL<I extends Variables> extends Node<I & (typeof inputs)
 
     async _update() {
 
-        const image = this.in.image.value;
+        const image = <PoolCanvas<any>>this.in.image.value;
         if (!image) {
             return;
         }
@@ -230,7 +233,7 @@ export default class WebGL<I extends Variables> extends Node<I & (typeof inputs)
 
         if (this.image) {
             // Upload the image into the texture.
-            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, await createImageBitmap(this.image));
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, await createImageBitmap(<PoolCanvas<any>>this.image));
         }
 
         const texcoordBuffer = gl.createBuffer();
@@ -309,8 +312,8 @@ export default class WebGL<I extends Variables> extends Node<I & (typeof inputs)
         if (image.release) {
             image.release();
         }
-        if (this.out.image.value && this.out.image.value.release) {
-            this.out.image.value.release();
+        if (this.out.image.value && (<PoolCanvas<any>>this.out.image.value).release) {
+            (<PoolCanvas<any>>this.out.image.value).release();
         }
         this.out.image.value = resultCanvas;
         if (this.out.width.value !== this.out.image.value.width) {

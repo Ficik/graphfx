@@ -32,6 +32,7 @@ export default class Webcam extends Node {
         /** @type {HTMLVideoElement} */
 
         const video = document.createElement('video');
+        // @ts-ignore
         video.playsinline = true;
         video.srcObject = stream;
         video.play();

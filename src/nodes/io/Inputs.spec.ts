@@ -24,6 +24,7 @@ describe('Inputs', () => {
                 type: 'String',
                 default: 'foo'
             },
+        // @ts-ignore
         }, owner)
 
         expect(inputs.x.type).toBe('Number');

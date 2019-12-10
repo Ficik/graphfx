@@ -1,6 +1,6 @@
 import Canvas2d from './Canvas2d';
 import {waitForMedia} from '../../utils';
-import {createCanvas, mediaSize, paintToCanvas} from '../canvas';
+import {createCanvas, mediaSize, paintToCanvas, Bounds} from '../canvas';
 import {
     ImageVar,
     StringVar,
@@ -27,7 +27,7 @@ const outputs = {};
 export default class Resize extends Canvas2d<typeof inputs, typeof outputs> {
 
     constructor() {
-        super('Resize', inputs, outputs, {});
+        super('Resize', inputs, outputs);
     }
 
     /**
@@ -52,7 +52,7 @@ export default class Resize extends Canvas2d<typeof inputs, typeof outputs> {
         const {width: destWidth, height: destHeight} = mediaSize(canvas);
         const srcAspectRatio = (srcWidth / srcHeight);
         const destAspectRatio = (destWidth / destHeight);
-        const newImage = {};
+        const newImage:Partial<Bounds> = {};
         if (srcAspectRatio > destAspectRatio) {
           newImage.width = destHeight * srcAspectRatio;
           newImage.height = destHeight;
@@ -64,7 +64,7 @@ export default class Resize extends Canvas2d<typeof inputs, typeof outputs> {
         newImage.top = (destHeight - newImage.height) / 2;
         newImage.left = (destWidth - newImage.width) / 2;
 
-        paintToCanvas(canvas, media, newImage);
+        paintToCanvas(canvas, media, <Bounds>newImage);
         return canvas;
     }
 }

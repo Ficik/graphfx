@@ -1,5 +1,5 @@
 import {Inputs, Outputs} from './io/index';
-import uuidv4 from 'uuid/v4';
+import { v4 as uuid } from 'uuid';
 import {Variables, InputProperties, OutputProperties} from './io/AbstractIOSet';
 import {MultiSubject} from '../helpers/listener';
 
@@ -16,10 +16,10 @@ export default class Node<I extends Variables, O extends Variables> {
     _stopped: boolean
     subject: MultiSubject
 
-    constructor(name: string, inputDefinition: I, outputDefiniton: O, options) {
+    constructor(name: string, inputDefinition: I, outputDefiniton: O) {
         this.name = name;
-        this.uid = uuidv4();
-        this.id = uuidv4();
+        this.uid = uuid();
+        this.id = uuid();
         this.__in = new Inputs(inputDefinition, this) as Inputs<I> & InputProperties<I>;
         this.__out = new Outputs(outputDefiniton, this) as Outputs<O> & OutputProperties<O>;
         this.__in.update = (name) => this.__update([name]);
@@ -95,7 +95,7 @@ export default class Node<I extends Variables, O extends Variables> {
     }
 
     async deserialize({id, options}) {
-        this.id = id || uuidv4();
+        this.id = id || uuid();
     }
 
     async reconnect({options}, outputs) {

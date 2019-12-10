@@ -1,3 +1,4 @@
+// @ts-nocheck
 import Node from './Canvas2d';
 import {waitForMedia} from '../../utils';
 import {createCanvas, mediaSize, paintToCanvas} from '../canvas';
