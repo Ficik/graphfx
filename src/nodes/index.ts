@@ -13,6 +13,9 @@ export {default as HSV} from './WebGL/HSV';
 export {default as Sepia} from './WebGL/Sepia';
 export {default as GreenScreen} from './WebGL/Greenscreen';
 export {default as Channels} from './WebGL/Channels';
+export {default as GradientMap} from './WebGL/GradientMap';
+export {default as ColorLookupTable} from './WebGL/ColorLookupTable';
+export {default as Vignette} from './WebGL/Vignette';
 // export {default as Blur} from './WebGL/Blur';
 // Math
 export {default as Numbers} from './Math/Numbers';

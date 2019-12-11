@@ -3,6 +3,10 @@ import { v4 as uuid } from 'uuid';
 import {Variables, InputProperties, OutputProperties} from './io/AbstractIOSet';
 import {MultiSubject} from '../helpers/listener';
 
+/**
+ * Elemetar unit of graphfx
+ * has inputs/outputs which can be connected to other nodes
+ */
 export default class Node<I extends Variables, O extends Variables> {
 
     name: string
@@ -70,19 +74,24 @@ export default class Node<I extends Variables, O extends Variables> {
     }
 
     /**
-     * Input getters
+     * Node inputs
+     *
      */
     get in() {
         return this.__in;
     }
 
     /**
-     * Output getters
+     * Node outputs
+     *
      */
     get out() {
         return this.__out;
     }
 
+    /**
+     * Create json serializable object
+     */
     serialize() {
         return {
             id: this.id,

@@ -149,6 +149,30 @@ export default class WebGL<I extends Variables> extends Node<I & (typeof inputs)
         return texture;
     }
 
+    async createTextures(gl: WebGLRenderingContext, program: WebGLProgram) {
+        let i = 0;
+        type Texture = {
+            i: number,
+            tex: WebGLTexture,
+            name: string,
+            location: WebGLUniformLocation,
+        };
+        const textures:Texture[] = [];
+        for (let inputName of Object.keys(this.in.variables)) {
+            if (this.in[inputName].type === 'Image' && this.in[inputName].value) {
+                textures.push({
+                    i,
+                    tex: this.createTexture(gl),
+                    name: inputName,
+                    location:  gl.getUniformLocation(program, `u_${inputName}`),
+                })
+                i+=1;
+                gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, await createImageBitmap(<PoolCanvas<any>>this.in[inputName].value));
+            }
+        }
+        return textures;
+    }
+
     _createFrameBuffer(gl: WebGLRenderingContext, {width, height}) {
         const texture = this.createTexture(gl);
 
@@ -175,8 +199,7 @@ export default class WebGL<I extends Variables> extends Node<I & (typeof inputs)
         ]
     }
 
-    _setParams(gl, program) {
-
+    _setParams(gl: WebGLRenderingContext, program: WebGLProgram) {
     }
 
     setup() {
@@ -219,8 +242,6 @@ export default class WebGL<I extends Variables> extends Node<I & (typeof inputs)
         ];
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 
-        this.createTexture(gl);
-
         gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
         gl.clearColor(0, 0, 0, 0);
         gl.clear(gl.COLOR_BUFFER_BIT);
@@ -231,10 +252,7 @@ export default class WebGL<I extends Variables> extends Node<I & (typeof inputs)
         const resolutionLocation = gl.getUniformLocation(program, "u_resolution");
         const flipLocation = gl.getUniformLocation(program, "u_flip_y");
 
-        if (this.image) {
-            // Upload the image into the texture.
-            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, await createImageBitmap(<PoolCanvas<any>>this.image));
-        }
+        const textures = await this.createTextures(gl, program);
 
         const texcoordBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, texcoordBuffer);
@@ -289,15 +307,25 @@ export default class WebGL<I extends Variables> extends Node<I & (typeof inputs)
                 gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuffer.frameBuffer);
             }
 
+
+
             passes[iter](gl, program);
             // set the resolution
             gl.uniform2f(resolutionLocation, gl.canvas.width, gl.canvas.height);
             gl.uniform2f(gl.getUniformLocation(program, "u_textureSize"), width, height);
 
+            for (let {i, tex, location, name} of textures) {
+                // console.log('bind', i, name, this.in[name].value, location, [gl.TEXTURE0, gl.TEXTURE1, gl.TEXTURE2, gl.TEXTURE3][i]);
+                if (this.in[name].value) {
+                    gl.uniform1i(location, i + 2);
+                    gl.activeTexture([gl.TEXTURE2, gl.TEXTURE3][i]);
+                    gl.bindTexture(gl.TEXTURE_2D, tex);
+                }
+            }
+
             // Draw the rectangle.
             gl.drawArrays(gl.TRIANGLES, 0, 6);
-
-            gl.bindTexture(gl.TEXTURE_2D, frameBuffer.texture);
+            // gl.bindTexture(gl.TEXTURE_2D, frameBuffer.texture);
         }
 
         const resultCanvas = canvasPool2D.createCanvas();
