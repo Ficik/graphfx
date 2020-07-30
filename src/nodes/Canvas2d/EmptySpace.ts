@@ -68,8 +68,8 @@ export default class EmptySpace extends Canvas2d<typeof inputs, typeof outputs> 
       this.out.right.value = right;
       this.out.bottom.value = bottom;
       this.out.left.value = left;
-      this.out.w.value = right - left;
-      this.out.h.value = bottom - top;
+      this.out.w.value = right - left + 1;
+      this.out.h.value = bottom - top + 1;
       return canvas;
   }
 }
