@@ -5,6 +5,7 @@ import {
     VariableValueType,
 } from './AbstractIOSet';
 import {serialize, deserialize} from './serializer';
+import { isNil } from '../../utils';
 
 export default class Input<V extends Variable> extends AbstractIO<V> {
 
@@ -61,7 +62,7 @@ export default class Input<V extends Variable> extends AbstractIO<V> {
 
     async deserialize({value, label}) {
         const deserializedValue = await deserialize(value);
-        if (deserializedValue) {
+        if (!isNil(deserializedValue)) {
             this.value = deserializedValue;
         }
         this.label = label

@@ -9,6 +9,18 @@ import {
 
 const inputs = {
     image: null,
+    width: {
+        type: 'Number',
+        default: 100,
+        step: 1,
+        min: 1
+    } as NumberVar,
+    height: {
+        type: 'Number',
+        default: 100,
+        step: 1,
+        min: 1,
+    } as NumberVar,
     fg: {
         type: 'Image'
     } as ImageVar,
@@ -34,18 +46,6 @@ const inputs = {
         type: 'Number',
         default: 0,
         step: 1,
-    } as NumberVar,
-    width: {
-        type: 'Number',
-        default: 100,
-        step: 1,
-        min: 1
-    } as NumberVar,
-    height: {
-        type: 'Number',
-        default: 100,
-        step: 1,
-        min: 1,
     } as NumberVar,
     mode: {
         type: 'String',
