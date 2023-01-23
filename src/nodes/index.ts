@@ -25,3 +25,4 @@ export {default as NumberBinaryOperation} from './Math/NumberBinaryOperation';
 export {default as Font} from './Font';
 export {default as Disable} from './Disable';
 // export {default as Synchronize} from './Synchronize';
+export {default as Api} from './Api';
