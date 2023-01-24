@@ -43,6 +43,9 @@ export default class Node<I extends Variables, O extends Variables> {
                     const startTag =`graphfx-update-start:${this.uid}`;
                     const endTag = `graphfx-update-end:${this.uid}`
                     this.__scheduledUpdate = false;
+                    if (!this.hasAllConnectedInputsValue()) {
+                        return;
+                    }
                     performance.mark(startTag)
                     await this._update();
                     performance.mark(endTag)
@@ -87,6 +90,15 @@ export default class Node<I extends Variables, O extends Variables> {
      */
     get out() {
         return this.__out;
+    }
+
+    hasAllConnectedInputsValue() {
+        for(const inputName of Object.keys(this.in.variables)) {
+            if (this.in[inputName].output && !this.in[inputName].value) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
