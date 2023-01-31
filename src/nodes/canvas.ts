@@ -18,7 +18,7 @@ export const mediaSize = (media: HTMLImageElement|HTMLVideoElement|{width: numbe
 
 /**
  * @param {HTMLCanvasElement} canvas
- * @param {PaintableElement} media
+ * @param {CanvasImageSource} media
  * @param {Bounds} param2
  */
 export const paintToCanvas = (
