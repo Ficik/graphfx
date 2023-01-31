@@ -1,7 +1,7 @@
 import Node from './Node';
 import {ImageVar, NumberVar, StringVar} from './io/AbstractIOSet';
 import throttle from 'lodash/throttle'
-import {createCanvas, paintToCanvas} from "./canvas";
+import {createCanvas, mediaSize, paintToCanvas} from './canvas';
 
 const numberOfImageInputs = 8;
 const inputs = {
@@ -54,12 +54,6 @@ const inputs = {
     image7: {
         type: 'Image',
     } as ImageVar,
-    width: {
-        type: 'Number',
-    } as NumberVar,
-    height: {
-        type: 'Number',
-    } as NumberVar,
     url: {
         type: 'String',
     } as StringVar,
@@ -87,11 +81,10 @@ export default class Api extends Node<typeof inputs, typeof outputs> {
         super('Api', inputs, outputs);
         this.updateThrottleWait = this.in.throttleMs.value;
         this.updateThrottled = throttle(this.upload, this.updateThrottleWait);
-        console.log(this.updateThrottleWait);
     }
 
     async _update() {
-        if (!this.in.url.value || !this.in.width.value || !this.in.height.value) {
+        if (!this.in.url.value) {
             return;
         }
 
@@ -151,12 +144,13 @@ export default class Api extends Node<typeof inputs, typeof outputs> {
     }
 
     private async getBlobFromImage(media: CanvasImageSource): Promise<Blob> {
+        const {width, height} = mediaSize(media)
         if (!this.tempCanvas) {
-            this.tempCanvas = createCanvas(this.in.width.value, this.in.height.value);
+            this.tempCanvas = createCanvas(width, height);
         }
 
         paintToCanvas(this.tempCanvas, media, {
-            top: 0, left: 0, width: this.in.width.value, height: this.in.height.value,
+            top: 0, left: 0, width, height,
         })
 
         return await new Promise((resolve, reject) => {
