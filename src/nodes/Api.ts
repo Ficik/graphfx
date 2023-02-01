@@ -90,6 +90,7 @@ export default class Api extends Node<typeof inputs, typeof outputs> {
 
         if (this.updateThrottleWait !== this.in.throttleMs.value) {
             this.updateThrottleWait = this.in.throttleMs.value;
+            this.updateThrottled = throttle(this.upload, this.updateThrottleWait);
         }
 
         try {
@@ -149,6 +150,8 @@ export default class Api extends Node<typeof inputs, typeof outputs> {
             this.tempCanvas = createCanvas(width, height);
         }
 
+        this.tempCanvas.width = width;
+        this.tempCanvas.height = height;
         paintToCanvas(this.tempCanvas, media, {
             top: 0, left: 0, width, height,
         })
