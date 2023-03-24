@@ -91,7 +91,7 @@ export default class BodySegmentation extends Node<typeof inputs, typeof outputs
 
         const foregroundColor = {r: 0, g: 0, b: 0, a: 0};
         const backgroundColor = {r: 0, g: 0, b: 0, a: 255};
-        const foregroundThreshold = this.in.maskBlurAmount.value;
+        const foregroundThreshold = this.in.foregroundThreshold.value;
         const backgroundDarkeningMask = await toBinaryMask(
             segmentations,
             foregroundColor,
