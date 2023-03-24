@@ -1,6 +1,6 @@
 {
   "name": "graphfx",
-  "version": "0.3.3",
+  "version": "0.4.0",
   "description": "Graph image processing pipeline",
   "main": "src/index.ts",
   "scripts": {
@@ -29,10 +29,15 @@
     "typescript": "^3.7.3"
   },
   "dependencies": {
+    "@mediapipe/selfie_segmentation": "^0.1.1675465747",
+    "@tensorflow-models/body-segmentation": "^1.0.1",
+    "@tensorflow/tfjs-backend-webgl": "^4.2.0",
+    "@tensorflow/tfjs-converter": "^4.2.0",
+    "@tensorflow/tfjs-core": "^4.2.0",
     "@types/css-font-loading-module": "0.0.2",
     "@types/uuid": "^3.4.6",
-    "uuid": "^3.3.3",
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "uuid": "^3.3.3"
   },
   "jest": {
     "setupFiles": [
