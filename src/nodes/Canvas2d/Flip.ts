@@ -1,7 +1,7 @@
 import Canvas2d from './Canvas2d';
 import {createCanvas, mediaSize, paintToCanvas} from '../canvas';
 import {
-    BooleanVar
+    BooleanVar, ImageVar
   } from '../io/AbstractIOSet';
 
 const inputs = {

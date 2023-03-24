@@ -10,11 +10,14 @@ const inputs = {
     } as ImageVar,
     radius: {
         type: 'Number',
-        default: 0,
+        default: 8,
+        min: 0,
     } as NumberVar,
     sigma: {
         type: 'Number',
-        default: 0,
+        default: 1,
+        step: 0.1,
+        min: 0,
     } as NumberVar,
     passes: {
         type: 'Number',
@@ -105,7 +108,6 @@ export default class Blur extends WebGL<typeof inputs> {
             }
 
             gl_FragColor = colorSum / totalWeight;
-            gl_FragColor.a = 1.0;
         }
         `
     }
