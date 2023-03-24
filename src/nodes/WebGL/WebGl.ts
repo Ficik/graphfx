@@ -317,15 +317,21 @@ export default class WebGL<I extends Variables> extends Node<I & (typeof inputs)
             for (let {i, tex, location, name} of textures) {
                 // console.log('bind', i, name, this.in[name].value, location, [gl.TEXTURE0, gl.TEXTURE1, gl.TEXTURE2, gl.TEXTURE3][i]);
                 if (this.in[name].value) {
-                    gl.uniform1i(location, i + 2);
-                    gl.activeTexture([gl.TEXTURE2, gl.TEXTURE3][i]);
-                    gl.bindTexture(gl.TEXTURE_2D, tex);
+                    if (name === 'image' && iter > 0) {
+                        gl.activeTexture([gl.TEXTURE2, gl.TEXTURE3][i]);
+                        gl.bindTexture(gl.TEXTURE_2D, frameBuffers[(iter-1)%2].texture);
+                        gl.uniform1i(location, i + 2);
+                    } else {
+                        gl.uniform1i(location, i + 2);
+                        gl.activeTexture([gl.TEXTURE2, gl.TEXTURE3][i]);
+                        gl.bindTexture(gl.TEXTURE_2D, tex);
+                    }
                 }
             }
 
             // Draw the rectangle.
             gl.drawArrays(gl.TRIANGLES, 0, 6);
-            // gl.bindTexture(gl.TEXTURE_2D, frameBuffer.texture);
+            gl.bindTexture(gl.TEXTURE_2D, frameBuffer.texture);
         }
 
         const resultCanvas = canvasPool2D.createCanvas();

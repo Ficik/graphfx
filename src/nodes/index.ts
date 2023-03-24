@@ -16,7 +16,7 @@ export {default as Channels} from './WebGL/Channels';
 export {default as GradientMap} from './WebGL/GradientMap';
 export {default as ColorLookupTable} from './WebGL/ColorLookupTable';
 export {default as Vignette} from './WebGL/Vignette';
-// export {default as Blur} from './WebGL/Blur';
+export {default as Blur} from './WebGL/Blur';
 export {default as Edge} from './WebGL/Edge';
 // Math
 export {default as Numbers} from './Math/Numbers';
