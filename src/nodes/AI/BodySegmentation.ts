@@ -74,10 +74,10 @@ export default class BodySegmentation extends Node<typeof inputs, typeof outputs
     async segmentPeople() {
         await this.initSegmenter();
         await waitForMedia(this.in.image.value);
-        const {width, height} = mediaSize(this.__in.image.value);
         if (!this.in.image.value) {
             return;
         }
+        const {width, height} = mediaSize(this.__in.image.value);
 
         const originalImageCanvas = canvasPool2D.createCanvas();
         originalImageCanvas.width = width;
