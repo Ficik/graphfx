@@ -84,7 +84,7 @@ export default class Api extends Node<typeof inputs, typeof outputs> {
     }
 
     async _update() {
-        if (!this.in.url.value) {
+        if (!this.canUpdate()) {
             return;
         }
 
@@ -100,6 +100,31 @@ export default class Api extends Node<typeof inputs, typeof outputs> {
             this.out.image.value = undefined;
             await new Promise((resolve) => setTimeout(resolve, this.updateThrottleWait));
         }
+    }
+
+    private canUpdate(): boolean {
+        if (!this.in.url.value) {
+            return false
+        }
+
+        const inputs = [
+            'image0',
+            'image1',
+            'image2',
+            'image3',
+            'image4',
+            'image5',
+            'image6',
+            'image7',
+        ]
+
+        for(const input of inputs) {
+            if (this.in[input].output && !this.in[input].value) {
+                return false
+            }
+        }
+
+        return true;
     }
 
     private async upload(): Promise<HTMLImageElement | undefined> {
