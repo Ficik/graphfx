@@ -1,22 +1,22 @@
 import {
     ImageVar,
-    NumberVar
+    NumberVar, VariableValueType
 } from '../io/AbstractIOSet';
 import Node from "../Node";
 import '@tensorflow/tfjs-backend-webgl';
-import {
-    Face,
+import {Face,
     FaceDetector,
     FaceDetectorInput,
+    MediaPipeFaceDetectorModelConfig,
     SupportedModels,
     createDetector,
-    MediaPipeFaceDetectorTfjsModelConfig
 } from '@tensorflow-models/face-detection';
 import {canvasPool2D} from "../../canvas/CanvasPool";
 import {waitForMedia} from "../../utils";
 import { mediaSize } from '../canvas';
 import {first} from 'lodash/array';
 import keyBy from 'lodash/keyBy';
+import {OutputProperties} from "graphfx/src/nodes/io/AbstractIOSet";
 
 const inputs = {
     image: {
@@ -28,6 +28,18 @@ const outputs = {
     image: {
         type: 'Image'
     } as ImageVar,
+    faceX: {
+        type: 'Number',
+    } as NumberVar,
+    faceY: {
+        type: 'Number',
+    } as NumberVar,
+    faceWidth: {
+        type: 'Number',
+    } as NumberVar,
+    faceHeight: {
+        type: 'Number',
+    } as NumberVar,
     rightEyeX: {
         type: 'Number',
     } as NumberVar,
@@ -64,7 +76,10 @@ const outputs = {
     leftEarTragionY: {
         type: 'Number',
     } as NumberVar,
-}
+};
+
+type Outputs = typeof outputs;
+type UpdateOutputNodesPayload = Partial<{[key in keyof OutputProperties<Outputs>]: VariableValueType<Outputs[key]>}>;
 
 export default class FaceFeaturePosition extends Node<typeof inputs, typeof outputs> {
     private detector: FaceDetector
@@ -82,7 +97,7 @@ export default class FaceFeaturePosition extends Node<typeof inputs, typeof outp
             maxFaces: 1,
             modelType: 'short',
             runtime: 'tfjs',
-        } as MediaPipeFaceDetectorTfjsModelConfig;
+        } as MediaPipeFaceDetectorModelConfig;
         this.detector = await createDetector(model, detectorConfig);
     }
 
@@ -104,27 +119,56 @@ export default class FaceFeaturePosition extends Node<typeof inputs, typeof outp
 
         const detections = await this.detector.estimateFaces(this.in.image.value as FaceDetectorInput, {flipHorizontal: false});
 
-        if (!detections.length) {
-            this.out.image.value = this.in.image.value;
-            return;
+        if (detections.length) {
+            const detection: Face = first(detections);
+            const keyPoints = keyBy(detection.keypoints, (keyPoint) => keyPoint.name)
+            this.updateOutputNodes({
+                faceX: detection.box.xMin,
+                faceY: detection.box.yMin,
+                faceWidth: detection.box.width,
+                faceHeight: detection.box.height,
+                rightEyeX: keyPoints['rightEye'].x,
+                rightEyeY: keyPoints['rightEye'].y,
+                leftEyeX: keyPoints['leftEye'].x,
+                leftEyeY: keyPoints['leftEye'].y,
+                noseTipX: keyPoints['noseTip'].x,
+                noseTipY: keyPoints['noseTip'].y,
+                mouthCenterX: keyPoints['mouthCenter'].x,
+                mouthCenterY: keyPoints['mouthCenter'].y,
+                rightEarTragionX: keyPoints['rightEarTragion'].x,
+                rightEarTragionY: keyPoints['rightEarTragion'].y,
+                leftEarTragionX: keyPoints['leftEarTragion'].x,
+                leftEarTragionY: keyPoints['leftEarTragion'].y,
+                image: this.in.image.value,
+            })
+        } else {
+            this.updateOutputNodes({
+                faceX: undefined,
+                faceY: undefined,
+                faceWidth: undefined,
+                faceHeight: undefined,
+                rightEyeX: undefined,
+                rightEyeY: undefined,
+                leftEyeX: undefined,
+                leftEyeY: undefined,
+                noseTipX: undefined,
+                noseTipY: undefined,
+                mouthCenterX: undefined,
+                mouthCenterY: undefined,
+                rightEarTragionX: undefined,
+                rightEarTragionY: undefined,
+                leftEarTragionX: undefined,
+                leftEarTragionY: undefined,
+                image: this.in.image.value,
+            });
         }
+    }
 
-        const detection: Face = first(detections);
-        const keyPoints = keyBy(detection.keypoints, (keyPoint) => keyPoint.name)
-
-        this.out.image.value = this.in.image.value;
-        this.out.rightEyeX.value = keyPoints['rightEye'].x;
-        this.out.rightEyeY.value = keyPoints['rightEye'].y;
-        this.out.leftEyeX.value = keyPoints['leftEye'].x;
-        this.out.leftEyeY.value = keyPoints['leftEye'].y;
-        this.out.noseTipX.value = keyPoints['noseTip'].x;
-        this.out.noseTipY.value = keyPoints['noseTip'].y;
-        this.out.mouthCenterX.value = keyPoints['mouthCenter'].x;
-        this.out.mouthCenterY.value = keyPoints['mouthCenter'].y;
-        this.out.rightEarTragionX.value = keyPoints['rightEarTragion'].x;
-        this.out.rightEarTragionY.value = keyPoints['rightEarTragion'].y;
-        this.out.leftEarTragionX.value = keyPoints['leftEarTragion'].x;
-        this.out.leftEarTragionY.value = keyPoints['leftEarTragion'].y;
+    updateOutputNodes(payload: UpdateOutputNodesPayload) {
+        for(let key of Object.keys(payload)) {
+            this.out[key].__value = payload[key];
+            this.out[key].__notifyListeners();
+        }
     }
 
     async _update(){
