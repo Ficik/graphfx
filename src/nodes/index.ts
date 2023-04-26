@@ -29,3 +29,4 @@ export {default as Disable} from './Disable';
 export {default as Api} from './Api';
 export {default as BodySegmentation} from './AI/BodySegmentation';
 export {default as FaceFeaturePosition} from './AI/FaceFeaturePosition';
+export {default as Eval} from './Eval';
