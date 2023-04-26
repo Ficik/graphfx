@@ -56,13 +56,9 @@ export default class NumberBinaryOperation extends Node<typeof inputs, typeof ou
     }
 
     interpolate() {
-        return this.in.formula.value.replace(/\{(\w+)\}/g, (_, paramName) => {
-            const value = get(this.in, [paramName, 'value']);
-            if (value) {
-                return value;
-            }
-            return '';
-        })
+        return this.in.formula.value.replace(/\{(\w+)\}/g, (_, paramName) =>
+            get(this.in, [paramName, 'value'], 0)
+        )
     }
 
     evaluate() {
