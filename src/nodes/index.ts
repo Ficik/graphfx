@@ -28,5 +28,6 @@ export {default as Disable} from './Disable';
 // export {default as Synchronize} from './Synchronize';
 export {default as Api} from './Api';
 export {default as BodySegmentation} from './AI/BodySegmentation';
+export {default as BodyPartSegmentation} from './AI/BodyPartSegmentation';
 export {default as FaceFeaturePosition} from './AI/FaceFeaturePosition';
 export {default as Eval} from './Eval';
