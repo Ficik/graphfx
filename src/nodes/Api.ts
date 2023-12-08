@@ -1,5 +1,5 @@
 import Node from './Node';
-import {ImageVar, NumberVar, StringVar} from './io/AbstractIOSet';
+import {BooleanVar, ImageVar, NumberVar, StringVar} from './io/AbstractIOSet';
 import throttle from 'lodash/throttle'
 import {createCanvas, mediaSize, paintToCanvas} from './canvas';
 
@@ -63,6 +63,16 @@ const inputs = {
     throttleMs: {
         type: 'Number',
         default: 10000,
+    } as NumberVar,
+    compress: {
+        type: 'Boolean',
+        default: false,
+    } as BooleanVar,
+    quality: {
+        type: 'Number',
+        default: 95,
+        min: 0,
+        max: 100,
     } as NumberVar,
 };
 
@@ -182,12 +192,16 @@ export default class Api extends Node<typeof inputs, typeof outputs> {
         })
 
         return await new Promise((resolve, reject) => {
-            this.tempCanvas.toBlob((blob) => {
-                if (!blob) {
-                    reject();
-                }
-                resolve(blob);
-            })
+            this.tempCanvas.toBlob(
+                (blob) => {
+                    if (!blob) {
+                        reject();
+                    }
+                    resolve(blob);
+                },
+                this.in.compress.value ? 'image/jpeg' : 'image/png',
+                this.in.compress.value,
+            )
         });
     }
 }
