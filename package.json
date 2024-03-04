@@ -38,6 +38,8 @@
     "@tensorflow/tfjs-core": "^4.2.0",
     "@types/css-font-loading-module": "0.0.2",
     "@types/uuid": "^3.4.6",
+    "@zxing/browser": "^0.1.4",
+    "@zxing/library": "^0.20.0",
     "lodash": "^4.17.21",
     "uuid": "^3.3.3"
   },

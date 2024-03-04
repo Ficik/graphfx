@@ -31,3 +31,5 @@ export {default as BodySegmentation} from './AI/BodySegmentation';
 export {default as BodyPartSegmentation} from './AI/BodyPartSegmentation';
 export {default as FaceFeaturePosition} from './AI/FaceFeaturePosition';
 export {default as Eval} from './Eval';
+export {default as QRCodeDetector} from './QRCodeDetector';
+export {default as MarkerDetector} from './MarkerDetector';
