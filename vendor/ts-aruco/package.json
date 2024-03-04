@@ -1,0 +1,35 @@
+{
+  "name": "ts-aruco",
+  "version": "0.0.1",
+  "description": "TypeScript port of jcmellado's ArUco library",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/axeljaeger/ts-aruco.git"
+  },
+  "keywords": [
+    "aruco",
+    "markers",
+    "augmented",
+    "reality",
+    "typescript"
+  ],
+  "author": "Axel Jäger",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/axeljaeger/ts-aruco/issues"
+  },
+  "homepage": "https://github.com/axeljaeger/ts-aruco#readme",
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "eslint": "^8.57.0",
+    "eslint-config-standard-with-typescript": "^43.0.1",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-n": "^16.6.2",
+    "eslint-plugin-promise": "^6.1.1",
+    "typescript": "^5.3.3"
+  }
+}
