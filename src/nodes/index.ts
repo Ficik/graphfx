@@ -33,3 +33,4 @@ export {default as FaceFeaturePosition} from './AI/FaceFeaturePosition';
 export {default as Eval} from './Eval';
 export {default as QRCodeDetector} from './QRCodeDetector';
 export {default as MarkerDetector} from './MarkerDetector';
+export {default as WaitForAll} from './WaitForAll';
