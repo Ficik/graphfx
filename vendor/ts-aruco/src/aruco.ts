@@ -26,7 +26,7 @@ References:
   http://www.uco.es/investiga/grupos/ava/node/26
 */
 
-import { type CVContour, adaptiveThreshold, approxPolyDP, countNonZero, findContours, grayscale, isContourConvex, minEdgeLength, otsu, perimeter, threshold, warp } from './cv';
+import { CVContour, adaptiveThreshold, approxPolyDP, countNonZero, findContours, grayscale, isContourConvex, minEdgeLength, otsu, perimeter, threshold, warp } from './cv';
 
 export interface Marker {
   id: number
