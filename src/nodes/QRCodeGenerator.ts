@@ -6,6 +6,7 @@ import {
 import Node from './Node';
 import {canvasPool2D} from '../canvas/CanvasPool';
 import {BrowserQRCodeSvgWriter} from '@zxing/browser';
+import {EncodeHintType, QRCodeDecoderErrorCorrectionLevel} from '@zxing/library';
 
 const inputs = {
     text: {
@@ -15,6 +16,20 @@ const inputs = {
         type: 'Number',
         min: 1,
     } as NumberVar,
+    correction: {
+        type: 'String',
+        default: 'L',
+        enum: [
+            'L', /** L = ~7% correction */
+            'M', /** M = ~15% correction */
+            'Q', /** Q = ~25% correction */
+            'H', /** H = ~30% correction */
+        ],
+    } as StringVar,
+    margin: {
+        type: 'Number',
+        min: 0,
+    } as NumberVar,
 }
 
 const outputs = {
@@ -22,6 +37,9 @@ const outputs = {
         type: 'Image'
     } as ImageVar,
     size: {
+        type: 'Number',
+    } as NumberVar,
+    margin: {
         type: 'Number',
     } as NumberVar,
 };
@@ -38,8 +56,10 @@ export default class QRCodeGenerator extends Node<typeof inputs, typeof outputs>
         if (!this.in.text.value || !this.in.size.value) {
             return;
         }
-        BrowserQRCodeSvgWriter.QUIET_ZONE_SIZE = 0;
-        const svgElement = this.writer.write(this.in.text.value, this.in.size.value, this.in.size.value);
+        const encodeHintTypeMap = new Map<EncodeHintType, any>();
+        encodeHintTypeMap.set(EncodeHintType.MARGIN, this.in.margin.value);
+        encodeHintTypeMap.set(EncodeHintType.ERROR_CORRECTION, QRCodeDecoderErrorCorrectionLevel[this.in.correction.value]);
+        const svgElement = this.writer.write(this.in.text.value, this.in.size.value, this.in.size.value, encodeHintTypeMap);
         const canvas = canvasPool2D.createCanvas();
         canvas.width = this.in.size.value;
         canvas.height = this.in.size.value;
@@ -66,6 +86,7 @@ export default class QRCodeGenerator extends Node<typeof inputs, typeof outputs>
             img.height = this.in.size.value;
         });
 
+        this.out.margin.value = this.in.margin.value;
         this.out.size.value = this.in.size.value;
         this.out.image.value = canvas;
     }
