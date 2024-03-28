@@ -34,3 +34,4 @@ export {default as Eval} from './Eval';
 export {default as QRCodeDetector} from './QRCodeDetector';
 export {default as MarkerDetector} from './MarkerDetector';
 export {default as WaitForAll} from './WaitForAll';
+export {default as QRCodeGenerator} from './QRCodeGenerator';
