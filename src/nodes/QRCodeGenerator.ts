@@ -13,6 +13,7 @@ const inputs = {
     } as StringVar,
     size: {
         type: 'Number',
+        min: 1,
     } as NumberVar,
 }
 
@@ -34,9 +35,10 @@ export default class QRCodeGenerator extends Node<typeof inputs, typeof outputs>
     }
 
     async _update() {
-        if (!this.in.text.value || !this.in.size.value || this.in.size.value < 100) {
+        if (!this.in.text.value || !this.in.size.value) {
             return;
         }
+        BrowserQRCodeSvgWriter.QUIET_ZONE_SIZE = 0;
         const svgElement = this.writer.write(this.in.text.value, this.in.size.value, this.in.size.value);
         const canvas = canvasPool2D.createCanvas();
         canvas.width = this.in.size.value;
@@ -60,6 +62,8 @@ export default class QRCodeGenerator extends Node<typeof inputs, typeof outputs>
             };
 
             img.src = svgDataUrl;
+            img.width = this.in.size.value;
+            img.height = this.in.size.value;
         });
 
         this.out.size.value = this.in.size.value;
