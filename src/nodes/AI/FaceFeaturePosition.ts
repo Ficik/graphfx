@@ -1,13 +1,15 @@
 import {
     ImageVar,
-    NumberVar, VariableValueType
+    NumberVar,
+    StringVar,
+    VariableValueType,
 } from '../io/AbstractIOSet';
 import Node from "../Node";
 import '@tensorflow/tfjs-backend-webgl';
 import {Face,
     FaceDetector,
     FaceDetectorInput,
-    MediaPipeFaceDetectorModelConfig,
+    MediaPipeFaceDetectorMediaPipeModelConfig,
     SupportedModels,
     createDetector,
 } from '@tensorflow-models/face-detection';
@@ -22,6 +24,9 @@ const inputs = {
     image: {
         type: 'Image'
     } as ImageVar,
+    modelUrl: {
+        type: 'String',
+    } as StringVar,
 }
 
 const outputs = {
@@ -97,7 +102,8 @@ export default class FaceFeaturePosition extends Node<typeof inputs, typeof outp
             maxFaces: 1,
             modelType: 'short',
             runtime: 'tfjs',
-        } as MediaPipeFaceDetectorModelConfig;
+            detectorModelUrl: this.in.modelUrl.value ? this.in.modelUrl.value : undefined,
+        } as MediaPipeFaceDetectorMediaPipeModelConfig;
         this.detector = await createDetector(model, detectorConfig);
     }
 

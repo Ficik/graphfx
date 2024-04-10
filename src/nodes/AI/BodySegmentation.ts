@@ -1,6 +1,7 @@
 import {
     ImageVar,
-    NumberVar
+    NumberVar,
+    StringVar,
 } from '../io/AbstractIOSet';
 import Node from "../Node";
 import '@tensorflow/tfjs-backend-webgl';
@@ -35,6 +36,9 @@ const inputs = {
         min: 0,
         max: 1,
     } as NumberVar,
+    modelUrl: {
+        type: 'String',
+    } as StringVar,
 }
 
 const outputs = {
@@ -66,7 +70,8 @@ export default class BodySegmentation extends Node<typeof inputs, typeof outputs
         const model = SupportedModels.MediaPipeSelfieSegmentation;
         const segmenterConfig = {
             runtime: 'tfjs',
-            modelType: 'general'
+            modelType: 'general',
+            modelUrl: this.in.modelUrl.value ? this.in.modelUrl.value : undefined,
         } as MediaPipeSelfieSegmentationMediaPipeModelConfig;
         this.segmenter = await createSegmenter(model, segmenterConfig);
     }

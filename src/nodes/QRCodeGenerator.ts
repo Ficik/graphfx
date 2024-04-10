@@ -2,6 +2,7 @@ import {
     ImageVar,
     NumberVar,
     StringVar,
+    ColorVar,
 } from './io/AbstractIOSet';
 import Node from './Node';
 import {canvasPool2D} from '../canvas/CanvasPool';
@@ -30,6 +31,10 @@ const inputs = {
         type: 'Number',
         min: 0,
     } as NumberVar,
+    color: {
+        type: 'Color',
+        default: '#000000',
+    } as ColorVar,
 }
 
 const outputs = {
@@ -59,7 +64,12 @@ export default class QRCodeGenerator extends Node<typeof inputs, typeof outputs>
         const encodeHintTypeMap = new Map<EncodeHintType, any>();
         encodeHintTypeMap.set(EncodeHintType.MARGIN, this.in.margin.value);
         encodeHintTypeMap.set(EncodeHintType.ERROR_CORRECTION, QRCodeDecoderErrorCorrectionLevel[this.in.correction.value]);
-        const svgElement = this.writer.write(this.in.text.value, this.in.size.value, this.in.size.value, encodeHintTypeMap);
+        const svgElement: SVGSVGElement = this.writer.write(this.in.text.value, this.in.size.value, this.in.size.value, encodeHintTypeMap);
+
+        for(const element of svgElement.querySelectorAll('[fill]')) {
+            element.setAttribute('fill', this.in.color.value);
+        }
+
         const canvas = canvasPool2D.createCanvas();
         canvas.width = this.in.size.value;
         canvas.height = this.in.size.value;

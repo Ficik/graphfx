@@ -1,11 +1,16 @@
 import Node from './Node';
 import {
+    ImageVar,
     NumberVar,
     StringVar,
+    BooleanVar,
 } from './io/AbstractIOSet';
 import get from 'lodash/get';
 
 const inputs = {
+    image: {
+        type: 'Image'
+    } as ImageVar,
     i0: {
         type: 'Number',
         default: 0,
@@ -41,16 +46,23 @@ const inputs = {
     formula: {
         type: 'String',
         default: '',
-    } as StringVar
+    } as StringVar,
+    waitForInput: {
+        type: 'Boolean',
+        default: true,
+    } as BooleanVar
 };
 
 const outputs = {
+    image: {
+        type: 'Image'
+    } as ImageVar,
     result: {
         type: 'Number'
     } as NumberVar,
 }
 
-export default class NumberBinaryOperation extends Node<typeof inputs, typeof outputs> {
+export default class Eval extends Node<typeof inputs, typeof outputs> {
     constructor() {
         super('Eval', inputs, outputs);
     }
@@ -61,12 +73,20 @@ export default class NumberBinaryOperation extends Node<typeof inputs, typeof ou
         )
     }
 
+    hasAllConnectedInputsValue() {
+        if (this.in.waitForInput.value) {
+            return super.hasAllConnectedInputsValue();
+        }
+        return true;
+    }
+
     evaluate() {
         try {
             this.out.result.value = eval(this.interpolate());
         } catch (e) {
             console.error(e);
         }
+        this.out.image.value = this.in.image.value;
     }
 
     async _update() {
