@@ -1,7 +1,8 @@
 import {
     BooleanVar,
     ImageVar,
-    NumberVar
+    NumberVar,
+    StringVar,
 } from '../io/AbstractIOSet';
 import Node from "../Node";
 import '@tensorflow/tfjs-backend-webgl';
@@ -66,6 +67,9 @@ const inputs = {
         min: 0,
         max: 1,
     } as NumberVar,
+    modelUrl: {
+        type: 'String',
+    } as StringVar,
     ...(flow([
         bodyParts => keyBy(bodyParts, (bodyPart) => bodyPart),
         bodyParts => mapValues(bodyParts, () => ({
@@ -106,6 +110,7 @@ export default class BodyPartSegmentation extends Node<typeof inputs, typeof out
             runtime: 'tfjs',
             modelType: 'general',
             segmentBodyParts: true,
+            modelUrl: this.in.modelUrl.value ? this.in.modelUrl.value : undefined,
         } as BodyPixSegmentationConfig;
         this.segmenter = await createSegmenter(model, segmenterConfig);
     }
