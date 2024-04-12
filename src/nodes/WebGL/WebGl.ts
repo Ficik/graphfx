@@ -96,6 +96,8 @@ export default class WebGL<I extends Variables> extends Node<I & (typeof inputs)
         var shader = gl.createShader(gl.FRAGMENT_SHADER);
         gl.shaderSource(shader, this.frag);
         gl.compileShader(shader);
+        gl.enable(gl.BLEND);
+        gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
         if ( !gl.getShaderParameter(shader, gl.COMPILE_STATUS) ) {
           var info = gl.getShaderInfoLog(shader);
