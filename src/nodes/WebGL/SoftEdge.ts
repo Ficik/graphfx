@@ -110,7 +110,7 @@ export default class SoftEdge extends WebGL<typeof inputs> {
             vec4 color = colorSum / totalWeight;
             vec4 originalColor = texture2D(u_image, v_texCoord);
             float alpha = min(color.a, texture2D(u_image, v_texCoord).a);
-            gl_FragColor = vec4(originalColor.rgb * alpha, alpha);
+            gl_FragColor = vec4(originalColor.rgb, alpha);
         }
         `
     }
