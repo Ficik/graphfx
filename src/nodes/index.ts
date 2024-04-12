@@ -17,6 +17,7 @@ export {default as GradientMap} from './WebGL/GradientMap';
 export {default as ColorLookupTable} from './WebGL/ColorLookupTable';
 export {default as Vignette} from './WebGL/Vignette';
 export {default as Blur} from './WebGL/Blur';
+export {default as SoftEdge} from './WebGL/SoftEdge';
 export {default as Edge} from './WebGL/Edge';
 export {default as KernelPreset} from './WebGL/KernelPreset';
 // Math
