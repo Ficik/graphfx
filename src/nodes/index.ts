@@ -20,6 +20,8 @@ export {default as Blur} from './WebGL/Blur';
 export {default as SoftEdge} from './WebGL/SoftEdge';
 export {default as Edge} from './WebGL/Edge';
 export {default as KernelPreset} from './WebGL/KernelPreset';
+export {default as Levels} from './WebGL/Levels';
+export {default as LevelsAuto} from './WebGL/LevelsAuto';
 // Math
 export {default as Numbers} from './Math/Numbers';
 export {default as NumberBinaryOperation} from './Math/NumberBinaryOperation';
