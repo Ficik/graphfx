@@ -7,6 +7,7 @@ export {default as Flip} from './Canvas2d/Flip';
 export {default as EmptySpace} from './Canvas2d/EmptySpace';
 // export {default as ImageIdentity} from './Canvas2d/ImageIdentity';
 export {default as Text} from './Canvas2d/Text';
+export {default as Rotate} from './Canvas2d/Rotate';
  // WebGL
 export {default as BrightnessContrast} from './WebGL/BrightnessContrast';
 export {default as HSV} from './WebGL/HSV';
