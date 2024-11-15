@@ -39,3 +39,7 @@ export {default as QRCodeDetector} from './QRCodeDetector';
 export {default as MarkerDetector} from './MarkerDetector';
 export {default as WaitForAll} from './WaitForAll';
 export {default as QRCodeGenerator} from './QRCodeGenerator';
+export {default as ApiJson} from './ApiJson';
+export {default as Base64ToImg} from './Base64ToImg';
+export {default as ImgToBase64} from './ImgToBase64';
+
