@@ -5,11 +5,11 @@ import {
     StringVar,
     BooleanVar,
 } from './io/AbstractIOSet';
-import get from 'lodash/get';
+import _ from 'lodash';
 
 const inputs = {
     image: {
-        type: 'Image'
+        type: 'Image',
     } as ImageVar,
     i0: {
         type: 'Number',
@@ -43,6 +43,38 @@ const inputs = {
         type: 'Number',
         default: 0,
     } as NumberVar,
+    i8: {
+        type: 'String',
+        default: undefined,
+    } as StringVar,
+    i9: {
+        type: 'String',
+        default: undefined,
+    } as StringVar,
+    i10: {
+        type: 'String',
+        default: undefined,
+    } as StringVar,
+    i11: {
+        type: 'String',
+        default: undefined,
+    } as StringVar,
+    i12: {
+        type: 'String',
+        default: undefined,
+    } as StringVar,
+    i13: {
+        type: 'String',
+        default: undefined,
+    } as StringVar,
+    i14: {
+        type: 'String',
+        default: undefined,
+    } as StringVar,
+    i15: {
+        type: 'String',
+        default: undefined,
+    } as StringVar,
     formula: {
         type: 'String',
         default: '',
@@ -50,41 +82,52 @@ const inputs = {
     waitForInput: {
         type: 'Boolean',
         default: true,
-    } as BooleanVar
+    } as BooleanVar,
 };
 
 const outputs = {
     image: {
-        type: 'Image'
+        type: 'Image',
     } as ImageVar,
     result: {
-        type: 'Number'
+        type: 'Number',
     } as NumberVar,
-}
+    resultString: {
+        type: 'String',
+    } as StringVar,
+};
 
 export default class Eval extends Node<typeof inputs, typeof outputs> {
     constructor() {
         super('Eval', inputs, outputs);
     }
 
-    interpolate() {
-        return this.in.formula.value.replace(/\{(\w+)\}/g, (_, paramName) =>
-            get(this.in, [paramName, 'value'], 0)
-        )
+    interpolate(defaultValue: any) {
+        return this.in.formula.value.replace(/\{((i\d)+)}/g, (originalString, paramName) => {
+            return _.get(this.in, [paramName, 'value'], defaultValue);
+        });
     }
 
     hasAllConnectedInputsValue() {
-        if (this.in.waitForInput.value) {
-            return super.hasAllConnectedInputsValue();
+        if (!this.in.waitForInput.value) {
+            return true;
+        }
+
+        for (const inputName of Object.keys(this.in.variables)) {
+            // allow empty string
+            if (this.in[inputName].output && !this.in[inputName].value && !_.isString(this.in[inputName].value)) {
+                return false;
+            }
         }
         return true;
     }
 
     evaluate() {
         try {
-            this.out.result.value = eval(this.interpolate());
+            this.out.result.value = eval(this.interpolate(0));
+            this.out.resultString.value = eval(this.interpolate(''));
         } catch (e) {
-            console.error(e);
+            console.error(e, this.in);
         }
         this.out.image.value = this.in.image.value;
     }
