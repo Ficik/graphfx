@@ -54,10 +54,11 @@ export default class HSV extends WebGL<typeof inputs> {
         }
 
         void main() {
-            vec3 c = rgb2hsv(texture2D(u_image, v_texCoord).rgb);
+            vec4 texColor = texture2D(u_image, v_texCoord);
+            vec3 c = rgb2hsv(texColor.rgb);
             gl_FragColor = vec4(
                 hsv2rgb(vec3(c.x + u_shift.x, c.y * u_shift.y, c.z * u_shift.z)),
-                1
+                texColor.a
             );
         }
         `
