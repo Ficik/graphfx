@@ -1,7 +1,6 @@
 import {
   NumberVar,
   StringVar,
-  BooleanVar,
 } from './io/AbstractIOSet';
 import Node from './Node';
 import _ from 'lodash';
@@ -45,16 +44,6 @@ const inputs = {
   throttleMs: {
     type: 'Number',
     default: 10000,
-  } as NumberVar,
-  compress: {
-    type: 'Boolean',
-    default: false,
-  } as BooleanVar,
-  quality: {
-    type: 'Number',
-    default: 95,
-    min: 0,
-    max: 100,
   } as NumberVar,
 };
 
