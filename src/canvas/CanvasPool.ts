@@ -1,5 +1,5 @@
 export type PoolCanvas<T extends (OffscreenCanvas | HTMLCanvasElement)> = T & {
-    acquire(): void
+    acquire(): () => void
     release(): void
 }
 
@@ -8,11 +8,13 @@ class CanvasPool<T extends (OffscreenCanvas | HTMLCanvasElement)> {
     __ctx: any
     __pool: PoolCanvas<T>[]
     __pointerCounter: WeakMap<PoolCanvas<T>, number>
+    __availableListeners: Set<(canvas: PoolCanvas<T>) => void>
 
     constructor(ctx) {
         this.__ctx = ctx;
         this.__pool = [];
         this.__pointerCounter = new WeakMap();
+        this.__availableListeners = new Set();
     }
 
     __createNewCanvas() {
@@ -36,6 +38,18 @@ class CanvasPool<T extends (OffscreenCanvas | HTMLCanvasElement)> {
     acquireCanvas(canvas: PoolCanvas<T>) {
         const inUse = this.__pointerCounter.get(canvas) + 1;
         this.__pointerCounter.set(canvas, inUse);
+        let released = false;
+        return () => {
+            if (!released) {
+                released = true;
+                this.releaseCanvas(canvas);
+            }
+        }
+    }
+
+    onAvailable(listener: (canvas: PoolCanvas<T>) => void) {
+        this.__availableListeners.add(listener);
+        return () => this.__availableListeners.delete(listener);
     }
 
     releaseCanvas(canvas: PoolCanvas<T>) {
@@ -43,6 +57,9 @@ class CanvasPool<T extends (OffscreenCanvas | HTMLCanvasElement)> {
         this.__pointerCounter.set(canvas, inUse);
         if (inUse === 0) {
             this.__pool.push(canvas);
+            for (const listener of this.__availableListeners) {
+                listener(canvas);
+            }
         }
     }
 

@@ -1,3 +1,4 @@
+import {describe, expect, it} from 'vitest';
 import Outputs from './Outputs';
 
 describe('Outputs', () => {
