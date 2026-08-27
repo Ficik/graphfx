@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="38" height="28" viewBox="0 0 38 28">
+  <defs>
+    <linearGradient id="overlay" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0" stop-color="#31e6c2"/>
+      <stop offset="0.55" stop-color="#f8dd5c"/>
+      <stop offset="1" stop-color="#f05165"/>
+    </linearGradient>
+  </defs>
+  <rect x="3" y="4" width="29" height="18" fill="url(#overlay)"/>
+  <rect x="0" y="0" width="7" height="6" fill="#ffffff"/>
+  <rect x="32" y="22" width="6" height="6" fill="#111111"/>
+</svg>

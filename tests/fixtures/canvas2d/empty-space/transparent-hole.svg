@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="40" height="30" viewBox="0 0 40 30">
+  <defs>
+    <linearGradient id="surface" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0" stop-color="#3568a8"/>
+      <stop offset="1" stop-color="#8fd3c7"/>
+    </linearGradient>
+    <mask id="cutout">
+      <rect width="40" height="30" fill="#ffffff"/>
+      <rect x="7" y="5" width="13" height="9" fill="#000000"/>
+    </mask>
+  </defs>
+  <rect width="40" height="30" fill="url(#surface)" mask="url(#cutout)"/>
+</svg>
