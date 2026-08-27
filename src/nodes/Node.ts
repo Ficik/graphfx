@@ -2,6 +2,7 @@ import {Inputs, Outputs} from './io/index';
 import { v4 as uuid } from 'uuid';
 import {Variables, InputProperties, OutputProperties} from './io/AbstractIOSet';
 import {MultiSubject} from '../helpers/listener';
+import {isPoolCanvas} from '../utils';
 
 /**
  * Elemetar unit of graphfx
@@ -47,7 +48,14 @@ export default class Node<I extends Variables, O extends Variables> {
                         return;
                     }
                     performance.mark(startTag)
-                    await this._update();
+                    const heldInputs = this.__holdImageInputs();
+                    try {
+                        await this._update();
+                    } finally {
+                        for (const canvas of heldInputs) {
+                            canvas.release();
+                        }
+                    }
                     performance.mark(endTag)
                     performance.measure(`GraphFX<${this.name}>`, startTag, endTag)
                 })
@@ -59,6 +67,30 @@ export default class Node<I extends Variables, O extends Variables> {
                     throw err;
                 });
         }
+    }
+
+    /**
+     * Keep every pooled input canvas out of the pool while this node is reading
+     * it. Reads that outlive a microtask — Api serialising eight images, the
+     * tfjs nodes running inference, Canvas2d's own waitForMedia hop — would
+     * otherwise race an upstream re-render: the upstream releases the canvas,
+     * another branch pops it from the pool, wipes it to 1x1 and paints its own
+     * picture into it, and this node finishes reading someone else's shot.
+     */
+    __holdImageInputs(): {release(): void}[] {
+        const held = [];
+        for (const name of Object.keys(this.in.variables)) {
+            const input = this.in[name];
+            if (!input || input.type !== 'Image') {
+                continue;
+            }
+            const value = input.value;
+            if (isPoolCanvas(value)) {
+                value.acquire();
+                held.push(value);
+            }
+        }
+        return held;
     }
 
     _update(){

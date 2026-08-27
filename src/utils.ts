@@ -1,5 +1,16 @@
 export const isNil = (val) => val === null || val === undefined;
 
+export interface Releasable {
+    acquire(): void
+    release(): void
+}
+
+/** A canvas that came out of a CanvasPool and therefore carries a refcount. */
+export const isPoolCanvas = (value): value is Releasable =>
+    !!value &&
+    typeof value.acquire === 'function' &&
+    typeof value.release === 'function';
+
 const waitForImage = (img:HTMLImageElement): Promise<HTMLImageElement> => new Promise((resolve) => img.addEventListener('load', () => resolve(img), {once: true}));
 
 export const waitForMedia = async <T>(media:T):Promise<T> => {
