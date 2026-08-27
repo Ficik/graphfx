@@ -3,6 +3,12 @@ import {loadFixture} from './image';
 
 export const pooledCanvasFromFixture = async (path: string) => {
     const image = await loadFixture(path);
+    return pooledCanvasFromImage(image);
+};
+
+export const pooledCanvasFromImage = (
+    image: CanvasImageSource & {width: number, height: number},
+) => {
     const canvas = canvasPool2D.createCanvas();
     canvas.acquire();
     canvas.width = image.width;

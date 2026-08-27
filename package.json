@@ -7,7 +7,8 @@
     "dev": "webpack-dev-server --quiet --progress --watch --mode development",
     "build": "webpack --mode production --quiet --progress",
     "ts-check": "tsc --noEmit --project tsconfig.json",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:xvfb": "xvfb-run -a npm test"
   },
   "keywords": [
     "image processing",
