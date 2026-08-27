@@ -1,6 +1,5 @@
 import Node from './Node';
 import {ImageVar, NumberVar, StringVar} from './io/AbstractIOSet';
-import throttle from 'lodash/throttle'
 import {createCanvas, mediaSize, paintToCanvas} from './canvas';
 
 const numberOfImageInputs = 8;
@@ -85,13 +84,11 @@ const outputs = {
 
 
 export default class Api extends Node<typeof inputs, typeof outputs> {
-    private updateThrottled;
-    private updateThrottleWait;
+    private lastUploadStartedAt;
     private tempCanvas: HTMLCanvasElement;
     constructor() {
         super('Api', inputs, outputs);
-        this.updateThrottleWait = this.in.throttleMs.value;
-        this.updateThrottled = throttle(this.upload, this.updateThrottleWait);
+        this.lastUploadStartedAt = 0;
     }
 
     async _update() {
@@ -99,18 +96,22 @@ export default class Api extends Node<typeof inputs, typeof outputs> {
             return;
         }
 
-        if (this.updateThrottleWait !== this.in.throttleMs.value) {
-            this.updateThrottleWait = this.in.throttleMs.value;
-            this.updateThrottled = throttle(this.upload, this.updateThrottleWait);
-        }
-
         try {
-            this.out.image.value = await this.updateThrottled();
+            this.out.image.value = await this.throttledUpload();
         } catch (e) {
             console.error(e);
             this.out.image.value = undefined;
-            await new Promise((resolve) => setTimeout(resolve, this.updateThrottleWait));
+            await new Promise((resolve) => setTimeout(resolve, this.in.throttleMs.value));
         }
+    }
+
+    private async throttledUpload(): Promise<HTMLImageElement | undefined> {
+        const wait = this.lastUploadStartedAt + this.in.throttleMs.value - Date.now();
+        if (wait > 0) {
+            await new Promise((resolve) => setTimeout(resolve, wait));
+        }
+        this.lastUploadStartedAt = Date.now();
+        return this.upload();
     }
 
     private canUpdate(): boolean {
