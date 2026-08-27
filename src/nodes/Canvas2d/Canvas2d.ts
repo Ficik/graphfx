@@ -33,6 +33,7 @@ const outputs = {
 
 
 export default class Canvas2d<I extends Variables, O extends Variables> extends Node<I & (typeof inputs), O & (typeof outputs)> {
+
     constructor(name, inputDefinition: I, outputDefiniton: O) {
         super(name,
             merge(inputs, inputDefinition),
@@ -48,6 +49,14 @@ export default class Canvas2d<I extends Variables, O extends Variables> extends 
         type valuesType = {
             [K in keyof I]: VariableValueType<I[K]['type']>;
         }
+
+        const image = this.in.image && this.in.image.value;
+
+        let imageRelease = null;
+        if (image && image.acquire) {
+            imageRelease = image.acquire();
+        }
+
         const values:valuesType = <valuesType>{};
 
         for (let name of Object.keys(this.in.variables)) {
@@ -55,30 +64,26 @@ export default class Canvas2d<I extends Variables, O extends Variables> extends 
         }
 
         const canvas = canvasPool2D.createCanvas();
-        canvas.acquire();
+        const canvasRelease = canvas.acquire();
         const ctx = canvas.getContext('2d');
         canvas.width = 1;
         canvas.height = 1;
-        if (values.image && values.image.acquire) {
-            values.image.acquire();
-        }
 
         const lastResult = this.__out.image.value;
         try {
             const result = await this.render(values, canvas, ctx);
+            if (imageRelease) {
+                imageRelease();
+            }
             this.out.image.value = result;
             this.__updateOutputDimensions();
         } catch (err) {
             console.error('Error in render', err);
-            canvas.release();
-        }
-
-        if (values.image && values.image.release) {
-            values.image.release();
-        }
-
-        if (lastResult && lastResult.release) {
-            lastResult.release();
+        } finally {
+            canvasRelease();
+            if (imageRelease) {
+                imageRelease();
+            }
         }
     }
 

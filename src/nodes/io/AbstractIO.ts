@@ -46,7 +46,7 @@ export default class AbstractIO<V extends Variable> {
     label: string
     __listeners: Function[]
 
-    constructor(name, definition: V, owner: AbstractIOSet<any>) {
+    constructor(name: string, definition: V, owner: AbstractIOSet<any>) {
         this.__name = name;
         this.__owner = owner
         this.__definition = definition;
