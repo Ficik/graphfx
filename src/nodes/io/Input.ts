@@ -9,7 +9,7 @@ import { isNil } from '../../utils';
 
 export default class Input<V extends Variable> extends AbstractIO<V> {
 
-    __output: Output<V>
+    __output: Output<V> | null
     __onchangelistener: Function
 
     constructor(name, definition, owner) {

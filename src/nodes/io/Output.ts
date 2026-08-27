@@ -1,6 +1,7 @@
-import AbstractIO from './AbstractIO';
+import AbstractIO, { valueConstrainsSatisfied } from './AbstractIO';
 import {
     Variable,
+    VariableValueType,
 } from './AbstractIOSet';
 
 export default class Output<V extends Variable> extends AbstractIO<V> {
@@ -24,6 +25,18 @@ export default class Output<V extends Variable> extends AbstractIO<V> {
     set value(value) {
         this.__setValue(value);
         this.__notifyListeners();
+    }
+
+    __setValue(value: VariableValueType<V>) {
+        if (valueConstrainsSatisfied(this.__definition, value)) {
+            if (this.__value && this.__value.release) {
+                this.__value.release()
+            }
+            if (value && value.acquire) {
+                value.acquire()
+            }
+            this.__value = value;
+        }
     }
 
     __notifyListeners() {
